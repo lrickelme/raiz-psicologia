@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Raíz · Sistema de Gestão</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12,400;12,500;12,600;12,700;24,600;24,700&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="leaf" style="width:34px;height:34px;"></div>
+      <div class="brand-name">Raíz</div>
+    </div>
+    <nav class="nav-list">
+        <button class="nav-item" data-target="dashboard" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13h8V3H3v10Zm0 8h8v-6H3v6Zm10 0h8V11h-8v10Zm0-18v6h8V3h-8Z"/></svg>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-item" data-target="agenda" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 2v3M17 2v3M3 8h18M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z"/></svg>
+          <span>Agenda</span>
+        </button>
+        <button class="nav-item" data-target="pacientes" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg>
+          <span>Pacientes</span>
+        </button>
+        <button class="nav-item" data-target="estudos" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h11a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4V4Zm0 0v14"/></svg>
+          <span>Estudos</span>
+        </button>
+        <button class="nav-item" data-target="lembretes" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h14v10l-5 5H5V4Zm9 15v-5h5"/></svg>
+          <span>Lembretes</span>
+        </button>
+        <button class="nav-item" data-target="financeiro" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M7 14l3-3 3 3 5-6"/></svg>
+          <span>Financeiro</span>
+        </button>
+    </nav>
+    <div class="sidebar-spacer"></div>
+    <a class="guide-link" href="guia.html">Guia de identidade &amp; marca</a>
+    <div class="sidebar-profile">
+      <div class="avatar">HV</div>
+      <div>
+        <div class="profile-name">Dra. Helena V.</div>
+        <div class="profile-crp">CRP 06/12345</div>
+      </div>
+    </div>
+  </aside>
+  <main class="content">
+<section class="screen" id="screen-dashboard" data-screen="dashboard">
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:24px 28px 18px;border-bottom:1px solid var(--line);background:var(--surface);">
+    <div>
+      <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:23px;color:var(--ink);margin:0;">Boa tarde, Dra. Helena</h3>
+      <p style="margin:4px 0 0;font-size:13px;color:var(--muted);">Terça-feira, 30 de junho · 3 sessões hoje · R$ 9.450 no mês</p>
+    </div>
+    <button style="background:var(--wine);color:#FBEFE6;border:none;border-radius:999px;padding:11px 19px;font-size:13.5px;font-weight:600;font-family:'Hanken Grotesk',sans-serif;cursor:pointer;white-space:nowrap;">+ Nova consulta</button>
+  </div>
+<div style="padding:20px 28px 28px;display:flex;flex-direction:column;gap:16px;">
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;">
+    <div style="background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:16px 17px;">
+  <div style="font-size:12px;color:var(--muted);">Receita do mês</div>
+  <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:27px;font-weight:600;color:var(--ink);margin-top:6px;">R$ 9.450</div>
+  <div style="font-size:12px;color:var(--moss);font-weight:600;margin-top:4px;">▲ 12% vs. maio</div></div>
+    <div style="background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:16px 17px;">
+  <div style="font-size:12px;color:var(--muted);">Sessões realizadas</div>
+  <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:27px;font-weight:600;color:var(--ink);margin-top:6px;">42</div>
+  <div style="font-size:12px;color:var(--muted);font-weight:600;margin-top:4px;">de 48 agendadas</div></div>
+    <div style="background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:16px 17px;">
+  <div style="font-size:12px;color:var(--muted);">Projeção do mês</div>
+  <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:27px;font-weight:600;color:var(--ink);margin-top:6px;">R$ 11.200</div>
+  <div style="font-size:12px;color:var(--amber);font-weight:600;margin-top:4px;">6 sessões restantes</div></div>
+    <div style="background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:16px 17px;">
+  <div style="font-size:12px;color:var(--muted);">Ticket médio</div>
+  <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:27px;font-weight:600;color:var(--ink);margin-top:6px;">R$ 225</div>
+  <div style="font-size:12px;color:var(--muted);font-weight:600;margin-top:4px;">por sessão</div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1.7fr 1fr;gap:14px;">
+    <div style="background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:20px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:16px;font-weight:600;color:var(--ink);">Receita · últimos 6 meses</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);">em R$ mil</div>
+      </div>
+      <div style="display:flex;align-items:flex-end;gap:16px;height:150px;">
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end;"><div style="width:100%;max-width:40px;height:56%;background:var(--beige);border-radius:7px 7px 0 0;"></div><span style="font-size:11px;color:var(--muted);font-weight:400;">Jan</span></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end;"><div style="width:100%;max-width:40px;height:68%;background:var(--beige);border-radius:7px 7px 0 0;"></div><span style="font-size:11px;color:var(--muted);font-weight:400;">Fev</span></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end;"><div style="width:100%;max-width:40px;height:62%;background:var(--beige);border-radius:7px 7px 0 0;"></div><span style="font-size:11px;color:var(--muted);font-weight:400;">Mar</span></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end;"><div style="width:100%;max-width:40px;height:77%;background:var(--moss-l);border-radius:7px 7px 0 0;"></div><span style="font-size:11px;color:var(--muted);font-weight:400;">Abr</span></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end;"><div style="width:100%;max-width:40px;height:72%;background:var(--moss-l);border-radius:7px 7px 0 0;"></div><span style="font-size:11px;color:var(--muted);font-weight:400;">Mai</span></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end;"><div style="width:100%;max-width:40px;height:92%;background:var(--wine);border-radius:7px 7px 0 0;"></div><span style="font-size:11px;color:var(--ink);font-weight:600;">Jun</span></div>
+      </div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:20px;">
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:16px;font-weight:600;color:var(--ink);margin-bottom:16px;">Sessões do mês</div>
+      <div style="display:flex;align-items:center;gap:18px;">
+        <div style="width:104px;height:104px;border-radius:50%;background:conic-gradient(var(--moss) 0 78%, var(--amber) 78% 92%, var(--wine) 92% 100%);flex-shrink:0;position:relative;">
+          <div style="position:absolute;inset:18px;background:var(--surface);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;"><span style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:700;color:var(--ink);">48</span><span style="font-size:10px;color:var(--muted);">total</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:9px;font-size:12.5px;">
+          <div style="display:flex;align-items:center;gap:8px;"><span style="width:9px;height:9px;border-radius:3px;background:var(--moss);"></span>Realizadas <strong style="color:var(--ink);">42</strong></div>
+          <div style="display:flex;align-items:center;gap:8px;"><span style="width:9px;height:9px;border-radius:3px;background:var(--amber);"></span>Agendadas <strong style="color:var(--ink);">4</strong></div>
+          <div style="display:flex;align-items:center;gap:8px;"><span style="width:9px;height:9px;border-radius:3px;background:var(--wine);"></span>Canceladas <strong style="color:var(--ink);">2</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:20px;">
+    <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:16px;font-weight:600;color:var(--ink);margin-bottom:14px;">Sessões recentes</div>
+    <div style="display:flex;flex-direction:column;">
+      <div style="display:flex;align-items:center;gap:14px;padding:11px 0;border-bottom:1px solid var(--line);">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--beige);color:var(--ink);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;">MA</div>
+        <div style="flex:1;"><div style="font-size:13.5px;font-weight:600;color:var(--ink);">Mariana Alves</div><div style="font-size:11.5px;color:var(--muted);">Hoje · 09:00</div></div>
+        <span style="font-size:11.5px;font-weight:600;color:var(--moss);background:#E7ECDC;padding:4px 11px;border-radius:999px;">Realizada</span>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink);width:70px;text-align:right;">R$ 225</div>
+      </div><div style="display:flex;align-items:center;gap:14px;padding:11px 0;border-bottom:1px solid var(--line);">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--beige);color:var(--ink);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;">RC</div>
+        <div style="flex:1;"><div style="font-size:13.5px;font-weight:600;color:var(--ink);">Rafael Costa</div><div style="font-size:11.5px;color:var(--muted);">Hoje · 11:00</div></div>
+        <span style="font-size:11.5px;font-weight:600;color:var(--moss);background:#E7ECDC;padding:4px 11px;border-radius:999px;">Realizada</span>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink);width:70px;text-align:right;">R$ 200</div>
+      </div><div style="display:flex;align-items:center;gap:14px;padding:11px 0;border-bottom:1px solid var(--line);">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--beige);color:var(--ink);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;">BL</div>
+        <div style="flex:1;"><div style="font-size:13.5px;font-weight:600;color:var(--ink);">Beatriz Lemos</div><div style="font-size:11.5px;color:var(--muted);">Hoje · 14:30</div></div>
+        <span style="font-size:11.5px;font-weight:600;color:var(--amber);background:#F3E8D2;padding:4px 11px;border-radius:999px;">Agendada</span>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink);width:70px;text-align:right;">R$ 225</div>
+      </div><div style="display:flex;align-items:center;gap:14px;padding:11px 0;">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--beige);color:var(--ink);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;">CN</div>
+        <div style="flex:1;"><div style="font-size:13.5px;font-weight:600;color:var(--ink);">Carla Nunes</div><div style="font-size:11.5px;color:var(--muted);">Ontem · 17:30</div></div>
+        <span style="font-size:11.5px;font-weight:600;color:var(--moss);background:#E7ECDC;padding:4px 11px;border-radius:999px;">Realizada</span>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink);width:70px;text-align:right;">R$ 250</div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="screen" id="screen-agenda" data-screen="agenda">
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:24px 28px 18px;border-bottom:1px solid var(--line);background:var(--surface);">
+    <div>
+      <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:23px;color:var(--ink);margin:0;">Agenda</h3>
+      <p style="margin:4px 0 0;font-size:13px;color:var(--muted);">Semana de 28 de junho – 2 de julho · 14 sessões</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;"><div style="display:flex;background:var(--sand);border:1px solid var(--line);border-radius:999px;padding:3px;"><span style="font-size:12.5px;font-weight:600;padding:6px 14px;border-radius:999px;color:var(--muted);">Diária</span><span style="font-size:12.5px;font-weight:600;padding:6px 14px;border-radius:999px;background:var(--surface);color:var(--ink);box-shadow:0 2px 6px -3px rgba(0,0,0,0.2);">Semanal</span><span style="font-size:12.5px;font-weight:600;padding:6px 14px;border-radius:999px;color:var(--muted);">Mensal</span></div><button style="background:var(--wine);color:#FBEFE6;border:none;border-radius:999px;padding:11px 19px;font-size:13.5px;font-weight:600;font-family:'Hanken Grotesk',sans-serif;cursor:pointer;white-space:nowrap;">+ Nova consulta</button></div>
+  </div>
+<div style="padding:18px 28px 26px;">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+    <div style="width:30px;height:30px;border-radius:9px;border:1px solid var(--line2);background:var(--surface);display:flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer;">‹</div>
+    <div style="width:30px;height:30px;border-radius:9px;border:1px solid var(--line2);background:var(--surface);display:flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer;">›</div>
+    <span style="font-family:'Bricolage Grotesque',sans-serif;font-size:16px;font-weight:600;color:var(--ink);margin-left:6px;">Junho – Julho 2026</span>
+    <div style="flex:1;"></div>
+    <div style="display:flex;gap:14px;font-size:11.5px;color:var(--muted);">
+      <span style="display:flex;align-items:center;gap:6px;"><span style="width:9px;height:9px;border-radius:3px;background:var(--moss);"></span>Realizada</span>
+      <span style="display:flex;align-items:center;gap:6px;"><span style="width:9px;height:9px;border-radius:3px;background:var(--amber);"></span>Agendada</span>
+      <span style="display:flex;align-items:center;gap:6px;"><span style="width:9px;height:9px;border-radius:3px;background:var(--muted2);"></span>Bloqueio</span>
+    </div>
+  </div>
+  <div style="background:var(--surface);border:1px solid var(--line);border-radius:15px;overflow:hidden;">
+    <div style="display:flex;padding-left:54px;border-bottom:1px solid var(--line);background:var(--sand);">
+      <div style="flex:1;text-align:center;padding:11px 0;font-size:12.5px;font-weight:600;color:var(--ink);">Seg<br><span style="font-family:'Bricolage Grotesque',sans-serif;font-size:17px;">28</span></div><div style="flex:1;text-align:center;padding:11px 0;font-size:12.5px;font-weight:600;color:var(--ink);">Ter<br><span style="font-family:'Bricolage Grotesque',sans-serif;font-size:17px;">29</span></div><div style="flex:1;text-align:center;padding:11px 0;font-size:12.5px;font-weight:600;color:var(--wine);">Qua<br><span style="font-family:'Bricolage Grotesque',sans-serif;font-size:17px;">30</span></div><div style="flex:1;text-align:center;padding:11px 0;font-size:12.5px;font-weight:600;color:var(--ink);">Qui<br><span style="font-family:'Bricolage Grotesque',sans-serif;font-size:17px;">1</span></div><div style="flex:1;text-align:center;padding:11px 0;font-size:12.5px;font-weight:600;color:var(--ink);">Sex<br><span style="font-family:'Bricolage Grotesque',sans-serif;font-size:17px;">2</span></div>
+    </div>
+    <div style="position:relative;height:580px;margin-left:54px;">
+      <div style="position:absolute;inset:0;"><div style="position:absolute;top:0px;left:0;right:0;height:58px;border-top:1px solid var(--line);"></div><div style="position:absolute;top:-7px;left:-54px;width:54px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);text-align:right;padding-right:10px;">08:00</div><div style="position:absolute;top:58px;left:0;right:0;height:58px;border-top:1px solid var(--line);"></div><div style="position:absolute;top:51px;left:-54px;width:54px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);text-align:right;padding-right:10px;">09:00</div><div style="position:absolute;top:116px;left:0;right:0;height:58px;border-top:1px solid var(--line);"></div><div style="position:absolute;top:109px;left:-54px;width:54px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);text-align:right;padding-right:10px;">10:00</div><div style="position:absolute;top:174px;left:0;right:0;height:58px;border-top:1px solid var(--line);"></div><div style="position:absolute;top:167px;left:-54px;width:54px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);text-align:right;padding-right:10px;">11:00</div><div style="position:absolute;top:232px;left:0;right:0;height:58px;border-top:1px solid var(--line);"></div><div style="position:absolute;top:225px;left:-54px;width:54px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);text-align:right;padding-right:10px;">12:00</div><div style="position:absolute;top:290px;left:0;right:0;height:58px;border-top:1px solid var(--line);"></div><div style="position:absolute;top:283px;left:-54px;width:54px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);text-align:right;padding-right:10px;">13:00</div><div style="position:absolute;top:348px;left:0;right:0;height:58px;border-top:1px solid var(--line);"></div><div style="position:absolute;top:341px;left:-54px;width:54px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);text-align:right;padding-right:10px;">14:00</div><div style="position:absolute;top:406px;left:0;right:0;height:58px;border-top:1px solid var(--line);"></div><div style="position:absolute;top:399px;left:-54px;width:54px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);text-align:right;padding-right:10px;">15:00</div><div style="position:absolute;top:464px;left:0;right:0;height:58px;border-top:1px solid var(--line);"></div><div style="position:absolute;top:457px;left:-54px;width:54px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);text-align:right;padding-right:10px;">16:00</div><div style="position:absolute;top:522px;left:0;right:0;height:58px;border-top:1px solid var(--line);"></div><div style="position:absolute;top:515px;left:-54px;width:54px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--muted);text-align:right;padding-right:10px;">17:00</div></div>
+      <div style="position:absolute;top:0;bottom:0;left:calc(1*(100%/5));width:1px;background:var(--line);"></div><div style="position:absolute;top:0;bottom:0;left:calc(2*(100%/5));width:1px;background:var(--line);"></div><div style="position:absolute;top:0;bottom:0;left:calc(3*(100%/5));width:1px;background:var(--line);"></div><div style="position:absolute;top:0;bottom:0;left:calc(4*(100%/5));width:1px;background:var(--line);"></div>
+      <div style="position:absolute;left:calc(0*(100%/5) + 4px);top:60px;width:calc(100%/5 - 8px);height:52px;background:#E7ECDC;border-left:3px solid var(--moss);border-radius:8px;padding:6px 9px;overflow:hidden;">
+    <div style="font-size:12px;font-weight:600;color:#3F4A33;line-height:1.2;">Carla Nunes</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#3F4A33;opacity:0.75;">09:00–10:00</div>
+  </div><div style="position:absolute;left:calc(0*(100%/5) + 4px);top:234px;width:calc(100%/5 - 8px);height:52px;background:#EEE6DA;border-left:3px solid var(--muted2);border-radius:8px;padding:6px 9px;overflow:hidden;">
+    <div style="font-size:12px;font-weight:600;color:#6F6051;line-height:1.2;">Almoço</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#6F6051;opacity:0.75;">12:00–13:00</div>
+  </div><div style="position:absolute;left:calc(0*(100%/5) + 4px);top:408px;width:calc(100%/5 - 8px);height:52px;background:#E7ECDC;border-left:3px solid var(--moss);border-radius:8px;padding:6px 9px;overflow:hidden;">
+    <div style="font-size:12px;font-weight:600;color:#3F4A33;line-height:1.2;">Otávio Pires</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#3F4A33;opacity:0.75;">15:00–16:00</div>
+  </div><div style="position:absolute;left:calc(1*(100%/5) + 4px);top:60px;width:calc(100%/5 - 8px);height:52px;background:#E7ECDC;border-left:3px solid var(--moss);border-radius:8px;padding:6px 9px;overflow:hidden;">
+    <div style="font-size:12px;font-weight:600;color:#3F4A33;line-height:1.2;">Mariana Alves</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#3F4A33;opacity:0.75;">09:00–10:00</div>
+  </div><div style="position:absolute;left:calc(1*(100%/5) + 4px);top:176px;width:calc(100%/5 - 8px);height:52px;background:#F3E8D2;border-left:3px solid var(--amber);border-radius:8px;padding:6px 9px;overflow:hidden;">
+    <div style="font-size:12px;font-weight:600;color:#6B4F1E;line-height:1.2;">Lucas Reis</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#6B4F1E;opacity:0.75;">11:00–12:00</div>
+  </div><div style="position:absolute;left:calc(1*(100%/5) + 4px);top:350px;width:calc(100%/5 - 8px);height:52px;background:#F3E8D2;border-left:3px solid var(--amber);border-radius:8px;padding:6px 9px;overflow:hidden;">
+    <div style="font-size:12px;font-weight:600;color:#6B4F1E;line-height:1.2;">Beatriz Lemos</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#6B4F1E;opacity:0.75;">14:00–15:00</div>
+  </div><div style="position:absolute;left:calc(2*(100%/5) + 4px);top:60px;width:calc(100%/5 - 8px);height:52px;background:#E7ECDC;border-left:3px solid var(--moss);border-radius:8px;padding:6px 9px;overflow:hidden;">
+    <div style="font-size:12px;font-weight:600;color:#3F4A33;line-height:1.2;">Mariana Alves</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#3F4A33;opacity:0.75;">09:00–10:00</div>
+  </div><div style="position:absolute;left:calc(2*(100%/5) + 4px);top:176px;width:calc(100%/5 - 8px);height:52px;background:#E7ECDC;border-left:3px solid var(--moss);border-radius:8px;padding:6px 9px;overflow:hidden;">
+    <div style="font-size:12px;font-weight:600;color:#3F4A33;line-height:1.2;">Rafael Costa</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#3F4A33;opacity:0.75;">11:00–12:00</div>
+  </div><div style="position:absolute;left:calc(2*(100%/5) + 4px);top:350px;width:calc(100%/5 - 8px);height:52px;background:#F3E8D2;border-left:3px solid var(--amber);border-radius:8px;padding:6px 9px;overflow:hidden;">
+    <div style="font-size:12px;font-weight:600;color:#6B4F1E;line-height:1.2;">Beatriz Lemos</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#6B4F1E;opacity:0.75;">14:00–15:00</div>
+  </div><div style="position:absolute;left:calc(2*(100%/5) + 4px);top:524px;width:calc(100%/5 - 8px);height:52px;background:#F3E8D2;border-left:3px solid var(--amber);border-radius:8px;padding:6px 9px;overflow:hidden;">
+    <div style="font-size:12px;font-weight:600;color:#6B4F1E;line-height:1.2;">Carla Nunes</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#6B4F1E;opacity:0.75;">17:00–18:00</div>
+  </div><div style="position:absolute;left:calc(3*(100%/5) + 4px);top:118px;width:calc(100%/5 - 8px);height:52px;background:#F3E8D2;border-left:3px solid var(--amber);border-radius:8px;padding:6px 9px;overflow:hidden;">
+    <div style="font-size:12px;font-weight:600;color:#6B4F1E;line-height:1.2;">Sofia Brandão</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#6B4F1E;opacity:0.75;">10:00–11:00</div>
+  </div><div style="position:absolute;left:calc(3*(100%/5) + 4px);top:292px;width:calc(100%/5 - 8px);height:52px;background:#F3E8D2;border-left:3px solid var(--amber);border-radius:8px;padding:6px 9px;overflow:hidden;">
+    <div style="font-size:12px;font-weight:600;color:#6B4F1E;line-height:1.2;">Otávio Pires</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#6B4F1E;opacity:0.75;">13:00–14:00</div>
+  </div><div style="position:absolute;left:calc(4*(100%/5) + 4px);top:60px;width:calc(100%/5 - 8px);height:52px;background:#F3E8D2;border-left:3px solid var(--amber);border-radius:8px;padding:6px 9px;overflow:hidden;">
+    <div style="font-size:12px;font-weight:600;color:#6B4F1E;line-height:1.2;">Diego Matos</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#6B4F1E;opacity:0.75;">09:00–10:00</div>
+  </div><div style="position:absolute;left:calc(4*(100%/5) + 4px);top:234px;width:calc(100%/5 - 8px);height:52px;background:#EEE6DA;border-left:3px solid var(--muted2);border-radius:8px;padding:6px 9px;overflow:hidden;">
+    <div style="font-size:12px;font-weight:600;color:#6F6051;line-height:1.2;">Helena (supervisão)</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#6F6051;opacity:0.75;">12:00–13:00</div>
+  </div><div style="position:absolute;left:calc(4*(100%/5) + 4px);top:408px;width:calc(100%/5 - 8px);height:52px;background:#F3E8D2;border-left:3px solid var(--amber);border-radius:8px;padding:6px 9px;overflow:hidden;">
+    <div style="font-size:12px;font-weight:600;color:#6B4F1E;line-height:1.2;">Carla Nunes</div>
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:9.5px;color:#6B4F1E;opacity:0.75;">15:00–16:00</div>
+  </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="screen" id="screen-pacientes" data-screen="pacientes">
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:24px 28px 18px;border-bottom:1px solid var(--line);background:var(--surface);">
+    <div>
+      <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:23px;color:var(--ink);margin:0;">Mariana Alves</h3>
+      <p style="margin:4px 0 0;font-size:13px;color:var(--muted);">Paciente desde mar 2025 · 18 sessões · TCC + Gestalt</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;"><button style="background:var(--wine);color:#FBEFE6;border:none;border-radius:999px;padding:11px 19px;font-size:13.5px;font-weight:600;font-family:'Hanken Grotesk',sans-serif;cursor:pointer;white-space:nowrap;">Nova evolução</button></div>
+  </div>
+<div style="display:flex;gap:0;flex:1;">
+  <div style="width:300px;flex-shrink:0;border-right:1px solid var(--line);padding:24px 24px;background:var(--surface);display:flex;flex-direction:column;gap:20px;">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;">
+      <div style="width:74px;height:74px;border-radius:50%;background:var(--beige);color:var(--ink);display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-size:27px;font-weight:700;">MA</div>
+      <div><div style="font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:600;color:var(--ink);">Mariana Alves</div><div style="font-size:12px;color:var(--muted);">34 anos</div></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:13px;">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:9px;"><span style="font-size:12px;color:var(--muted);">Telefone</span><span style="font-size:13px;color:var(--ink);font-weight:500;text-align:right;">(83) 99812-4471</span></div><div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:9px;"><span style="font-size:12px;color:var(--muted);">E-mail</span><span style="font-size:13px;color:var(--ink);font-weight:500;text-align:right;">mariana.alves@email.com</span></div><div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:9px;"><span style="font-size:12px;color:var(--muted);">Valor/sessão</span><span style="font-size:13px;color:var(--ink);font-weight:500;text-align:right;">R$ 225,00</span></div><div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:9px;"><span style="font-size:12px;color:var(--muted);">Cadastro</span><span style="font-size:13px;color:var(--ink);font-weight:500;text-align:right;">12 mar 2025</span></div><div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:9px;"><span style="font-size:12px;color:var(--muted);">Frequência</span><span style="font-size:13px;color:var(--ink);font-weight:500;text-align:right;">Semanal · Terça 09:00</span></div>
+    </div>
+    <div style="background:#F1DEDC;border-radius:12px;padding:13px;display:flex;gap:10px;align-items:flex-start;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--wine)" stroke-width="2" style="flex-shrink:0;margin-top:1px;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <div style="font-size:11.5px;color:var(--wine-d);line-height:1.45;">Prontuário criptografado. Acesso registrado e sigiloso conforme CFP.</div>
+    </div>
+  </div>
+  <div style="flex:1;padding:24px 28px;background:var(--bg);">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:17px;font-weight:600;color:var(--ink);">Evoluções do prontuário</div>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);">18 registros</span>
+    </div>
+    <div style="position:relative;padding-left:26px;">
+      <div style="position:absolute;left:5px;top:6px;bottom:6px;width:2px;background:var(--line2);"></div>
+      <div style="position:relative;margin-bottom:16px;">
+        <div style="position:absolute;left:-26px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--wine);border:2px solid var(--surface);"></div>
+        <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px;">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;color:var(--ink);">30 jun 2026</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);">15:42</span>
+            <span style="font-size:10.5px;font-weight:600;color:var(--wine);background:#F1DEDC;padding:2px 9px;border-radius:999px;">Mais recente</span>
+          </div>
+          <p style="margin:0;font-size:13.5px;line-height:1.6;color:var(--ink2);">Sessão focada em Gestalt-terapia. Paciente relatou melhora na autorregulação emocional ao longo da semana, com episódios de ansiedade menos frequentes. Trabalhamos a técnica da cadeira vazia para o diálogo com a figura paterna.</p>
+        </div>
+      </div><div style="position:relative;margin-bottom:16px;">
+        <div style="position:absolute;left:-26px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--beige);border:2px solid var(--surface);"></div>
+        <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px;">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;color:var(--ink);">23 jun 2026</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);">15:38</span>
+            
+          </div>
+          <p style="margin:0;font-size:13.5px;line-height:1.6;color:var(--ink2);">Continuidade do processo de awareness. Trouxe avanços no reconhecimento de padrões de evitação no ambiente de trabalho. Tarefa: registro diário de sensações corporais.</p>
+        </div>
+      </div><div style="position:relative;margin-bottom:16px;">
+        <div style="position:absolute;left:-26px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--beige);border:2px solid var(--surface);"></div>
+        <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px;">
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;color:var(--ink);">16 jun 2026</span>
+            <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);">15:50</span>
+            
+          </div>
+          <p style="margin:0;font-size:13.5px;line-height:1.6;color:var(--ink2);">Primeira aplicação de exercícios de respiração diafragmática. Boa adesão. Relata dificuldade de sono — investigar higiene do sono na próxima sessão.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="screen" id="screen-estudos" data-screen="estudos">
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:24px 28px 18px;border-bottom:1px solid var(--line);background:var(--surface);">
+    <div>
+      <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:23px;color:var(--ink);margin:0;">Conteúdos a estudar</h3>
+      <p style="margin:4px 0 0;font-size:13px;color:var(--muted);">5 pendentes · 12 concluídos este mês</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;"><div style="display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line2);border-radius:999px;padding:6px 13px;font-size:12.5px;font-weight:600;color:var(--ink);cursor:pointer;">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82Z"/><circle cx="7" cy="7" r="1.4"/></svg>
+  Gerenciar labels</div><button style="background:var(--wine);color:#FBEFE6;border:none;border-radius:999px;padding:11px 19px;font-size:13.5px;font-weight:600;font-family:'Hanken Grotesk',sans-serif;cursor:pointer;white-space:nowrap;">+ Novo tópico</button></div>
+  </div>
+<div style="padding:22px 28px 26px;display:flex;gap:20px;align-items:flex-start;">
+  <div style="flex:1;display:flex;flex-direction:column;gap:12px;min-width:0;">
+  <div style="display:flex;align-items:center;gap:9px;padding:0 2px;">
+    <span style="width:9px;height:9px;border-radius:3px;background:var(--amber);"></span>
+    <span style="font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:600;color:var(--ink);">A estudar</span>
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);">3</span>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:11px;"><div style="background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:14px;box-shadow:0 4px 12px -8px rgba(70,52,42,0.3);">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px;">
+      <span style="font-size:10.5px;font-weight:600;color:#fff;background:var(--wine);padding:3px 10px;border-radius:999px;">Alta</span>
+      <div style="width:20px;height:20px;border:1.5px solid var(--line2);border-radius:6px;cursor:pointer;"></div>
+    </div>
+    <div style="font-size:13.5px;font-weight:600;color:var(--ink);line-height:1.3;margin-bottom:5px;">Revisar técnicas de regulação emocional</div>
+    <div style="font-size:12px;color:var(--muted);line-height:1.45;">Foco em DBT e mindfulness para o grupo de ansiedade.</div>
+  </div><div style="background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:14px;box-shadow:0 4px 12px -8px rgba(70,52,42,0.3);">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px;">
+      <span style="font-size:10.5px;font-weight:600;color:#fff;background:var(--amber);padding:3px 10px;border-radius:999px;">Média</span>
+      <div style="width:20px;height:20px;border:1.5px solid var(--line2);border-radius:6px;cursor:pointer;"></div>
+    </div>
+    <div style="font-size:13.5px;font-weight:600;color:var(--ink);line-height:1.3;margin-bottom:5px;">Artigo: vínculo terapêutico em adolescentes</div>
+    <div style="font-size:12px;color:var(--muted);line-height:1.45;">Ler e fichar — Revista Brasileira de Psicoterapia.</div>
+  </div><div style="background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:14px;box-shadow:0 4px 12px -8px rgba(70,52,42,0.3);">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px;">
+      <span style="font-size:10.5px;font-weight:600;color:#fff;background:var(--moss);padding:3px 10px;border-radius:999px;">Baixa</span>
+      <div style="width:20px;height:20px;border:1.5px solid var(--line2);border-radius:6px;cursor:pointer;"></div>
+    </div>
+    <div style="font-size:13.5px;font-weight:600;color:var(--ink);line-height:1.3;margin-bottom:5px;">Atualizar protocolo de anamnese</div>
+    <div style="font-size:12px;color:var(--muted);line-height:1.45;">Incluir campos de histórico familiar.</div>
+  </div></div>
+</div>
+  <div style="flex:1;display:flex;flex-direction:column;gap:12px;min-width:0;">
+  <div style="display:flex;align-items:center;gap:9px;padding:0 2px;">
+    <span style="width:9px;height:9px;border-radius:3px;background:var(--wine);"></span>
+    <span style="font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:600;color:var(--ink);">Em estudo</span>
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);">2</span>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:11px;"><div style="background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:14px;box-shadow:0 4px 12px -8px rgba(70,52,42,0.3);">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px;">
+      <span style="font-size:10.5px;font-weight:600;color:#fff;background:var(--wine);padding:3px 10px;border-radius:999px;">Alta</span>
+      <div style="width:20px;height:20px;border:1.5px solid var(--line2);border-radius:6px;cursor:pointer;"></div>
+    </div>
+    <div style="font-size:13.5px;font-weight:600;color:var(--ink);line-height:1.3;margin-bottom:5px;">Curso de Terapia do Esquema</div>
+    <div style="font-size:12px;color:var(--muted);line-height:1.45;">Módulo 3 de 8 · entregar exercício até sexta.</div>
+  </div><div style="background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:14px;box-shadow:0 4px 12px -8px rgba(70,52,42,0.3);">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px;">
+      <span style="font-size:10.5px;font-weight:600;color:#fff;background:var(--amber);padding:3px 10px;border-radius:999px;">Média</span>
+      <div style="width:20px;height:20px;border:1.5px solid var(--line2);border-radius:6px;cursor:pointer;"></div>
+    </div>
+    <div style="font-size:13.5px;font-weight:600;color:var(--ink);line-height:1.3;margin-bottom:5px;">Supervisão clínica — caso Beatriz</div>
+    <div style="font-size:12px;color:var(--muted);line-height:1.45;">Preparar material para apresentação.</div>
+  </div></div>
+</div>
+  <div style="flex:1;display:flex;flex-direction:column;gap:12px;min-width:0;">
+  <div style="display:flex;align-items:center;gap:9px;padding:0 2px;">
+    <span style="width:9px;height:9px;border-radius:3px;background:var(--moss);"></span>
+    <span style="font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:600;color:var(--ink);">Concluídos</span>
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);">12</span>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:11px;"><div style="background:var(--bg);border:1px solid var(--line);border-radius:13px;padding:13px 14px;display:flex;align-items:center;gap:10px;">
+  <div style="width:20px;height:20px;border-radius:6px;background:var(--moss);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;">✓</div>
+  <div style="flex:1;"><div style="font-size:13px;color:var(--muted);text-decoration:line-through;">Webinar: Luto e perdas</div><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted2);margin-top:2px;">concluído 28 jun</div></div>
+</div><div style="background:var(--bg);border:1px solid var(--line);border-radius:13px;padding:13px 14px;display:flex;align-items:center;gap:10px;">
+  <div style="width:20px;height:20px;border-radius:6px;background:var(--moss);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;">✓</div>
+  <div style="flex:1;"><div style="font-size:13px;color:var(--muted);text-decoration:line-through;">Leitura: Gestalt-terapia (Perls)</div><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted2);margin-top:2px;">concluído 21 jun</div></div>
+</div><div style="background:var(--bg);border:1px solid var(--line);border-radius:13px;padding:13px 14px;display:flex;align-items:center;gap:10px;">
+  <div style="width:20px;height:20px;border-radius:6px;background:var(--moss);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;">✓</div>
+  <div style="flex:1;"><div style="font-size:13px;color:var(--muted);text-decoration:line-through;">Atualização CRP — ética</div><div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--muted2);margin-top:2px;">concluído 14 jun</div></div>
+</div><div style="text-align:center;font-size:12px;color:var(--muted);padding:6px;">+ 9 no histórico</div></div>
+</div>
+</div>
+</section>
+
+<section class="screen" id="screen-lembretes" data-screen="lembretes">
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:24px 28px 18px;border-bottom:1px solid var(--line);background:var(--surface);">
+    <div>
+      <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:23px;color:var(--ink);margin:0;">Lembretes</h3>
+      <p style="margin:4px 0 0;font-size:13px;color:var(--muted);">Anotações rápidas do dia a dia · 6 ativos</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;"><button style="background:var(--wine);color:#FBEFE6;border:none;border-radius:999px;padding:11px 19px;font-size:13.5px;font-weight:600;font-family:'Hanken Grotesk',sans-serif;cursor:pointer;white-space:nowrap;">+ Novo lembrete</button></div>
+  </div>
+<div style="padding:24px 28px 28px;">
+  <div style="display:flex;gap:10px;margin-bottom:22px;">
+    <div style="flex:1;background:var(--surface);border:1.5px dashed var(--line2);border-radius:13px;padding:13px 16px;font-size:13.5px;color:var(--muted);display:flex;align-items:center;gap:10px;">
+      <span style="font-size:18px;color:var(--wine);">+</span> Escrever um novo lembrete…
+    </div>
+    <button style="background:var(--wine);color:#FBEFE6;border:none;border-radius:13px;padding:0 22px;font-size:13.5px;font-weight:600;font-family:'Hanken Grotesk',sans-serif;cursor:pointer;">Fixar</button>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;">
+    <div style="background:#F3E2BE;border-radius:4px 4px 10px 10px;padding:18px 16px 16px;box-shadow:0 8px 18px -10px rgba(70,52,42,0.45);transform:rotate(-1.5deg);position:relative;">
+  <div style="position:absolute;top:-7px;left:50%;transform:translateX(-50%);width:54px;height:14px;background:rgba(126,43,46,0.18);border-radius:3px;"></div>
+  <p style="margin:0 0 12px;font-size:13.5px;line-height:1.5;color:#6A5224;">Renovar registro CRP até dia 30 — anexar comprovante de pagamento.</p>
+  <div style="display:flex;justify-content:space-between;align-items:center;">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#6A5224;opacity:0.6;">hoje</span>
+    <div style="width:22px;height:22px;border-radius:50%;background:rgba(70,52,42,0.08);display:flex;align-items:center;justify-content:center;font-size:13px;color:#6A5224;opacity:0.6;cursor:pointer;">×</div>
+  </div>
+</div>
+    <div style="background:#E7ECD4;border-radius:4px 4px 10px 10px;padding:18px 16px 16px;box-shadow:0 8px 18px -10px rgba(70,52,42,0.45);transform:rotate(1.2deg);position:relative;">
+  <div style="position:absolute;top:-7px;left:50%;transform:translateX(-50%);width:54px;height:14px;background:rgba(126,43,46,0.18);border-radius:3px;"></div>
+  <p style="margin:0 0 12px;font-size:13.5px;line-height:1.5;color:#4B5436;">Ligar para o convênio sobre reembolso da Carla N.</p>
+  <div style="display:flex;justify-content:space-between;align-items:center;">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#4B5436;opacity:0.6;">hoje</span>
+    <div style="width:22px;height:22px;border-radius:50%;background:rgba(70,52,42,0.08);display:flex;align-items:center;justify-content:center;font-size:13px;color:#4B5436;opacity:0.6;cursor:pointer;">×</div>
+  </div>
+</div>
+    <div style="background:#F1DDD8;border-radius:4px 4px 10px 10px;padding:18px 16px 16px;box-shadow:0 8px 18px -10px rgba(70,52,42,0.45);transform:rotate(-0.8deg);position:relative;">
+  <div style="position:absolute;top:-7px;left:50%;transform:translateX(-50%);width:54px;height:14px;background:rgba(126,43,46,0.18);border-radius:3px;"></div>
+  <p style="margin:0 0 12px;font-size:13.5px;line-height:1.5;color:#7E2B2E;">Comprar caixa de lenços e chá para a sala de espera.</p>
+  <div style="display:flex;justify-content:space-between;align-items:center;">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#7E2B2E;opacity:0.6;">hoje</span>
+    <div style="width:22px;height:22px;border-radius:50%;background:rgba(70,52,42,0.08);display:flex;align-items:center;justify-content:center;font-size:13px;color:#7E2B2E;opacity:0.6;cursor:pointer;">×</div>
+  </div>
+</div>
+    <div style="background:#DCE6E6;border-radius:4px 4px 10px 10px;padding:18px 16px 16px;box-shadow:0 8px 18px -10px rgba(70,52,42,0.45);transform:rotate(1.6deg);position:relative;">
+  <div style="position:absolute;top:-7px;left:50%;transform:translateX(-50%);width:54px;height:14px;background:rgba(126,43,46,0.18);border-radius:3px;"></div>
+  <p style="margin:0 0 12px;font-size:13.5px;line-height:1.5;color:#34504F;">Confirmar palestra no CRP — sexta às 19h.</p>
+  <div style="display:flex;justify-content:space-between;align-items:center;">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#34504F;opacity:0.6;">hoje</span>
+    <div style="width:22px;height:22px;border-radius:50%;background:rgba(70,52,42,0.08);display:flex;align-items:center;justify-content:center;font-size:13px;color:#34504F;opacity:0.6;cursor:pointer;">×</div>
+  </div>
+</div>
+    <div style="background:#EDE0CF;border-radius:4px 4px 10px 10px;padding:18px 16px 16px;box-shadow:0 8px 18px -10px rgba(70,52,42,0.45);transform:rotate(-1.2deg);position:relative;">
+  <div style="position:absolute;top:-7px;left:50%;transform:translateX(-50%);width:54px;height:14px;background:rgba(126,43,46,0.18);border-radius:3px;"></div>
+  <p style="margin:0 0 12px;font-size:13.5px;line-height:1.5;color:#5C4636;">Reorganizar biblioteca de testes psicológicos.</p>
+  <div style="display:flex;justify-content:space-between;align-items:center;">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#5C4636;opacity:0.6;">hoje</span>
+    <div style="width:22px;height:22px;border-radius:50%;background:rgba(70,52,42,0.08);display:flex;align-items:center;justify-content:center;font-size:13px;color:#5C4636;opacity:0.6;cursor:pointer;">×</div>
+  </div>
+</div>
+    <div style="background:#F3E2BE;border-radius:4px 4px 10px 10px;padding:18px 16px 16px;box-shadow:0 8px 18px -10px rgba(70,52,42,0.45);transform:rotate(0.9deg);position:relative;">
+  <div style="position:absolute;top:-7px;left:50%;transform:translateX(-50%);width:54px;height:14px;background:rgba(126,43,46,0.18);border-radius:3px;"></div>
+  <p style="margin:0 0 12px;font-size:13.5px;line-height:1.5;color:#6A5224;">Enviar recibo de junho para o Rafael C.</p>
+  <div style="display:flex;justify-content:space-between;align-items:center;">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#6A5224;opacity:0.6;">hoje</span>
+    <div style="width:22px;height:22px;border-radius:50%;background:rgba(70,52,42,0.08);display:flex;align-items:center;justify-content:center;font-size:13px;color:#6A5224;opacity:0.6;cursor:pointer;">×</div>
+  </div>
+</div>
+  </div>
+</div>
+</section>
+
+<section class="screen" id="screen-financeiro" data-screen="financeiro">
+<div style="display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:24px 28px 18px;border-bottom:1px solid var(--line);background:var(--surface);">
+    <div>
+      <h3 style="font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:23px;color:var(--ink);margin:0;">Financeiro</h3>
+      <p style="margin:4px 0 0;font-size:13px;color:var(--muted);">Junho 2026 · faturado R$ 9.450 · a receber R$ 1.350</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;"><div style="display:flex;background:var(--sand);border:1px solid var(--line);border-radius:999px;padding:3px;"><span style="font-size:12.5px;font-weight:600;padding:6px 14px;border-radius:999px;background:var(--surface);color:var(--ink);box-shadow:0 2px 6px -3px rgba(0,0,0,0.2);">Mês</span><span style="font-size:12.5px;font-weight:600;padding:6px 14px;border-radius:999px;color:var(--muted);">Trimestre</span><span style="font-size:12.5px;font-weight:600;padding:6px 14px;border-radius:999px;color:var(--muted);">Ano</span></div><button style="background:var(--wine);color:#FBEFE6;border:none;border-radius:999px;padding:11px 19px;font-size:13.5px;font-weight:600;font-family:'Hanken Grotesk',sans-serif;cursor:pointer;white-space:nowrap;">Exportar relatório</button></div>
+  </div>
+<div style="padding:20px 28px 28px;display:flex;flex-direction:column;gap:16px;">
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;">
+    <div style="background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:16px 17px;">
+  <div style="font-size:12px;color:var(--muted);">Faturado no mês</div>
+  <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:26px;font-weight:600;color:var(--ink);margin-top:6px;">R$ 9.450</div>
+  <div style="font-size:12px;color:var(--moss);font-weight:600;margin-top:4px;">▲ 12% vs. maio</div></div>
+    <div style="background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:16px 17px;">
+  <div style="font-size:12px;color:var(--muted);">A receber</div>
+  <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:26px;font-weight:600;color:var(--ink);margin-top:6px;">R$ 1.350</div>
+  <div style="font-size:12px;color:var(--amber);font-weight:600;margin-top:4px;">3 pagamentos pendentes</div></div>
+    <div style="background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:16px 17px;">
+  <div style="font-size:12px;color:var(--muted);">Projeção do mês</div>
+  <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:26px;font-weight:600;color:var(--ink);margin-top:6px;">R$ 11.200</div>
+  <div style="font-size:12px;color:var(--muted);font-weight:600;margin-top:4px;">6 sessões restantes</div></div>
+    <div style="background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:16px 17px;">
+  <div style="font-size:12px;color:var(--muted);">vs. jun 2025</div>
+  <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:26px;font-weight:600;color:var(--ink);margin-top:6px;">▲ 21%</div>
+  <div style="font-size:12px;color:var(--moss);font-weight:600;margin-top:4px;">R$ 7.800 no ano passado</div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1.7fr 1fr;gap:14px;">
+    <div style="background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:20px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+        <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:16px;font-weight:600;color:var(--ink);">Receita mensal · comparativo anual</div>
+        <div style="display:flex;gap:14px;font-size:11.5px;color:var(--muted);">
+          <span style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:3px;background:var(--beige);"></span>2025</span>
+          <span style="display:flex;align-items:center;gap:6px;"><span style="width:10px;height:10px;border-radius:3px;background:var(--moss-l);"></span>2026</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:flex-end;gap:14px;height:170px;"><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end;">
+    <div style="display:flex;align-items:flex-end;gap:4px;width:100%;max-width:48px;height:100%;justify-content:center;">
+      <div style="width:15px;height:60%;background:var(--beige);border-radius:5px 5px 0 0;"></div>
+      <div style="width:15px;height:68%;background:var(--moss-l);border-radius:5px 5px 0 0;"></div>
+    </div>
+    <span style="font-size:11px;color:var(--muted);font-weight:400;">Jan</span>
+  </div><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end;">
+    <div style="display:flex;align-items:flex-end;gap:4px;width:100%;max-width:48px;height:100%;justify-content:center;">
+      <div style="width:15px;height:64%;background:var(--beige);border-radius:5px 5px 0 0;"></div>
+      <div style="width:15px;height:71%;background:var(--moss-l);border-radius:5px 5px 0 0;"></div>
+    </div>
+    <span style="font-size:11px;color:var(--muted);font-weight:400;">Fev</span>
+  </div><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end;">
+    <div style="display:flex;align-items:flex-end;gap:4px;width:100%;max-width:48px;height:100%;justify-content:center;">
+      <div style="width:15px;height:57.99999999999999%;background:var(--beige);border-radius:5px 5px 0 0;"></div>
+      <div style="width:15px;height:66%;background:var(--moss-l);border-radius:5px 5px 0 0;"></div>
+    </div>
+    <span style="font-size:11px;color:var(--muted);font-weight:400;">Mar</span>
+  </div><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end;">
+    <div style="display:flex;align-items:flex-end;gap:4px;width:100%;max-width:48px;height:100%;justify-content:center;">
+      <div style="width:15px;height:70%;background:var(--beige);border-radius:5px 5px 0 0;"></div>
+      <div style="width:15px;height:79%;background:var(--moss-l);border-radius:5px 5px 0 0;"></div>
+    </div>
+    <span style="font-size:11px;color:var(--muted);font-weight:400;">Abr</span>
+  </div><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end;">
+    <div style="display:flex;align-items:flex-end;gap:4px;width:100%;max-width:48px;height:100%;justify-content:center;">
+      <div style="width:15px;height:66%;background:var(--beige);border-radius:5px 5px 0 0;"></div>
+      <div style="width:15px;height:78%;background:var(--moss-l);border-radius:5px 5px 0 0;"></div>
+    </div>
+    <span style="font-size:11px;color:var(--muted);font-weight:400;">Mai</span>
+  </div><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;height:100%;justify-content:flex-end;">
+    <div style="display:flex;align-items:flex-end;gap:4px;width:100%;max-width:48px;height:100%;justify-content:center;">
+      <div style="width:15px;height:74%;background:var(--beige);border-radius:5px 5px 0 0;"></div>
+      <div style="width:15px;height:94%;background:var(--wine);border-radius:5px 5px 0 0;"></div>
+    </div>
+    <span style="font-size:11px;color:var(--ink);font-weight:600;">Jun</span>
+  </div></div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:20px;">
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:16px;font-weight:600;color:var(--ink);margin-bottom:16px;">Status de pagamento</div>
+      <div style="display:flex;align-items:center;gap:18px;">
+        <div style="width:104px;height:104px;border-radius:50%;background:conic-gradient(var(--moss) 0 72%, var(--amber) 72% 90%, var(--wine) 90% 100%);flex-shrink:0;position:relative;">
+          <div style="position:absolute;inset:18px;background:var(--surface);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;"><span style="font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:700;color:var(--ink);">R$10,8k</span><span style="font-size:10px;color:var(--muted);">previsto</span></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:11px;font-size:12.5px;">
+          <div style="display:flex;align-items:center;gap:8px;"><span style="width:9px;height:9px;border-radius:3px;background:var(--moss);"></span>Pago <strong style="color:var(--ink);">R$ 8.100</strong></div>
+          <div style="display:flex;align-items:center;gap:8px;"><span style="width:9px;height:9px;border-radius:3px;background:var(--amber);"></span>Pendente <strong style="color:var(--ink);">R$ 1.125</strong></div>
+          <div style="display:flex;align-items:center;gap:8px;"><span style="width:9px;height:9px;border-radius:3px;background:var(--wine);"></span>Atrasado <strong style="color:var(--ink);">R$ 600</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:20px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:16px;font-weight:600;color:var(--ink);">Receita por paciente · junho</div>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);">20 sessões</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1.6fr 0.8fr 1fr 1fr 1fr;gap:12px;padding:8px 0;border-bottom:1.5px solid var(--line2);font-size:11px;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;color:var(--muted);">
+      <span>Paciente</span><span style="text-align:center;">Sessões</span><span style="text-align:right;">Valor</span><span style="text-align:right;">Total</span><span style="text-align:right;">Status</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1.6fr 0.8fr 1fr 1fr 1fr;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);">
+  <div style="display:flex;align-items:center;gap:11px;"><div style="width:30px;height:30px;border-radius:50%;background:var(--beige);color:var(--ink);display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:600;">MA</div><span style="font-size:13.5px;font-weight:600;color:var(--ink);">Mariana Alves</span></div>
+  <div style="font-size:13px;color:var(--ink2);text-align:center;">4</div>
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--muted);text-align:right;">R$ 225</div>
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink);font-weight:500;text-align:right;">R$ 900</div>
+  <div style="text-align:right;"><span style="font-size:11.5px;font-weight:600;color:var(--moss);background:#E7ECDC;padding:4px 11px;border-radius:999px;">Pago</span></div>
+</div><div style="display:grid;grid-template-columns:1.6fr 0.8fr 1fr 1fr 1fr;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);">
+  <div style="display:flex;align-items:center;gap:11px;"><div style="width:30px;height:30px;border-radius:50%;background:var(--beige);color:var(--ink);display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:600;">RC</div><span style="font-size:13.5px;font-weight:600;color:var(--ink);">Rafael Costa</span></div>
+  <div style="font-size:13px;color:var(--ink2);text-align:center;">4</div>
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--muted);text-align:right;">R$ 200</div>
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink);font-weight:500;text-align:right;">R$ 800</div>
+  <div style="text-align:right;"><span style="font-size:11.5px;font-weight:600;color:var(--moss);background:#E7ECDC;padding:4px 11px;border-radius:999px;">Pago</span></div>
+</div><div style="display:grid;grid-template-columns:1.6fr 0.8fr 1fr 1fr 1fr;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);">
+  <div style="display:flex;align-items:center;gap:11px;"><div style="width:30px;height:30px;border-radius:50%;background:var(--beige);color:var(--ink);display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:600;">BL</div><span style="font-size:13.5px;font-weight:600;color:var(--ink);">Beatriz Lemos</span></div>
+  <div style="font-size:13px;color:var(--ink2);text-align:center;">3</div>
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--muted);text-align:right;">R$ 225</div>
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink);font-weight:500;text-align:right;">R$ 675</div>
+  <div style="text-align:right;"><span style="font-size:11.5px;font-weight:600;color:var(--amber);background:#F3E8D2;padding:4px 11px;border-radius:999px;">Pendente</span></div>
+</div><div style="display:grid;grid-template-columns:1.6fr 0.8fr 1fr 1fr 1fr;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);">
+  <div style="display:flex;align-items:center;gap:11px;"><div style="width:30px;height:30px;border-radius:50%;background:var(--beige);color:var(--ink);display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:600;">CN</div><span style="font-size:13.5px;font-weight:600;color:var(--ink);">Carla Nunes</span></div>
+  <div style="font-size:13px;color:var(--ink2);text-align:center;">4</div>
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--muted);text-align:right;">R$ 250</div>
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink);font-weight:500;text-align:right;">R$ 1.000</div>
+  <div style="text-align:right;"><span style="font-size:11.5px;font-weight:600;color:var(--moss);background:#E7ECDC;padding:4px 11px;border-radius:999px;">Pago</span></div>
+</div><div style="display:grid;grid-template-columns:1.6fr 0.8fr 1fr 1fr 1fr;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);">
+  <div style="display:flex;align-items:center;gap:11px;"><div style="width:30px;height:30px;border-radius:50%;background:var(--beige);color:var(--ink);display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:600;">OP</div><span style="font-size:13.5px;font-weight:600;color:var(--ink);">Otávio Pires</span></div>
+  <div style="font-size:13px;color:var(--ink2);text-align:center;">2</div>
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--muted);text-align:right;">R$ 225</div>
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink);font-weight:500;text-align:right;">R$ 450</div>
+  <div style="text-align:right;"><span style="font-size:11.5px;font-weight:600;color:var(--amber);background:#F3E8D2;padding:4px 11px;border-radius:999px;">Pendente</span></div>
+</div><div style="display:grid;grid-template-columns:1.6fr 0.8fr 1fr 1fr 1fr;align-items:center;gap:12px;padding:12px 0;">
+  <div style="display:flex;align-items:center;gap:11px;"><div style="width:30px;height:30px;border-radius:50%;background:var(--beige);color:var(--ink);display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:600;">DM</div><span style="font-size:13.5px;font-weight:600;color:var(--ink);">Diego Matos</span></div>
+  <div style="font-size:13px;color:var(--ink2);text-align:center;">3</div>
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--muted);text-align:right;">R$ 200</div>
+  <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink);font-weight:500;text-align:right;">R$ 600</div>
+  <div style="text-align:right;"><span style="font-size:11.5px;font-weight:600;color:var(--wine);background:#F1DEDC;padding:4px 11px;border-radius:999px;">Atrasado</span></div>
+</div>
+  </div>
+</div>
+</section>
+  </main>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

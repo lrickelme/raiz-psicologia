@@ -1,0 +1,19 @@
+{
+  "name": "raiz",
+  "private": true,
+  "engines": {
+    "node": ">=22"
+  },
+  "packageManager": "pnpm@12.4.1",
+  "scripts": {
+    "dev": "pnpm db:up && concurrently -n api,web -c magenta,green \"pnpm --filter @raiz/api start:dev\" \"pnpm --filter @raiz/web dev\"",
+    "db:up": "docker compose up -d --wait db",
+    "db:down": "docker compose down",
+    "migrate": "pnpm --filter @raiz/api prisma:migrate",
+    "seed": "pnpm --filter @raiz/api prisma:seed",
+    "build": "pnpm --filter @raiz/shared build && pnpm -r --filter=!@raiz/shared build"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

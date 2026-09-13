@@ -1,0 +1,3 @@
+-- Migração inicial vazia.
+-- Não altera schema; existe para validar que o fluxo de migrations do Prisma
+-- conecta e aplica contra o container do Postgres antes de qualquer modelo.
