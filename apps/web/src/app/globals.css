@@ -1,26 +1,89 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Tokens do guia Raíz. Fonte da verdade: design-ref/TOKENS.md.
+ * Nomes seguem openspec/project.md; entre parênteses, a variável do design-ref.
+ */
+@theme {
+  /* --- Cor: primárias --- */
+  --color-raiz-marrom: #46342a; /* --ink: texto e chrome (fundo da sidebar) */
+  --color-raiz-vinho: #7e2b2e; /* --wine: ação primária */
+  --color-raiz-vinho-escuro: #6a2225; /* --wine-d: hover da ação primária */
+  --color-raiz-areia: #f3e9dc; /* --bg: fundo do app shell */
+  --color-raiz-superficie: #fcf8f2; /* --surface: cards, inputs */
+  --color-raiz-musgo: #5e6e4e; /* --moss: sucesso / realizado */
+  --color-raiz-musgo-claro: #7c8c64; /* --moss-l */
+  --color-raiz-ambar: #b6863c; /* --amber: atenção / agendado */
+
+  /* --- Cor: texto e bordas --- */
+  --color-raiz-texto-secundario: #5c4636; /* --ink2 */
+  --color-raiz-texto-terciario: #8c7a68; /* --muted */
+  --color-raiz-texto-inativo: #a89682; /* --muted2: nav inativo */
+  --color-raiz-borda: #e6d8c7; /* --line */
+  --color-raiz-borda-forte: #decdb8; /* --line2: inputs, botão secundário */
+
+  /* --- Cor: apoio --- */
+  --color-raiz-bege: #e5d6c2; /* --beige: avatar de paciente, barras de gráfico */
+  --color-raiz-sand: #efe3d3; /* --sand: fundo de controle segmentado */
+  --color-raiz-folha: #6e8158; /* início do gradiente do logo */
+  --color-raiz-linho-claro: #f5eee4; /* rgba(245,238,228,*): divisores e hover sobre o marrom */
+  --color-raiz-sobre-vinho: #fbefe6; /* texto sobre --wine */
+  --color-raiz-sobre-musgo: #f4f2e8; /* texto sobre --moss */
+  --color-raiz-musgo-suave: #e7ecdc; /* fundo do pill "Realizada" */
+  --color-raiz-ambar-suave: #f3e8d2; /* fundo do pill "Agendada" */
+  --color-raiz-vinho-suave: #f1dedc; /* fundo do pill "Cancelada" */
+
+  /* --- Tipografia --- */
+  --font-raiz-display: var(--font-bricolage), sans-serif;
+  --font-raiz-corpo: var(--font-hanken), system-ui, sans-serif;
+  --font-raiz-mono: var(--font-plex-mono), monospace;
+
+  --text-raiz-legenda: 11px;
+  --text-raiz-rotulo: 11.5px;
+  --text-raiz-meta: 12px;
+  --text-raiz-corpo-sm: 13px;
+  --text-raiz-corpo: 13.5px;
+  --text-raiz-nav: 14px;
+  --text-raiz-titulo-card: 16px;
+  --text-raiz-titulo-secao: 18px;
+  --text-raiz-marca: 21px;
+  --text-raiz-titulo: 23px;
+  --text-raiz-numero: 27px;
+
+  /* --- Espaçamento e forma --- */
+  --spacing-raiz-sidebar: 14.25rem; /* 228px no design; rem para a change 06 poder colapsar */
+  --spacing-raiz-conteudo-x: 1.75rem; /* 28px: laterais da área de conteúdo */
+
+  --radius-raiz-campo: 12px; /* input, item de nav */
+  --radius-raiz-card: 15px; /* cards das telas */
+  --radius-raiz-painel: 16px; /* cards do guia */
+  --radius-raiz-moldura: 20px; /* moldura da tela */
+
+  --shadow-raiz-moldura: 0 24px 60px -36px rgb(70 52 42 / 0.5);
+  --shadow-raiz-segmento: 0 2px 6px -3px rgb(0 0 0 / 0.2);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* O preflight impõe line-height 1.5; o design-ref usa `normal` em todo o shell. */
+@layer base {
+  html {
+    line-height: normal;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-raiz-areia);
+  color: var(--color-raiz-marrom);
+  font-family: var(--font-raiz-corpo);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #cdb9a2;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
 }

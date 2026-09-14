@@ -25,6 +25,10 @@ Pontos a fixar no proposal:
 - Texto criptografado em repouso com AES-256-GCM, aplicado via Prisma Client
   Extension no `$allOperations` do modelo. Chave fora do banco e fora do
   repositório — variável de ambiente ou cofre.
+- **A extensão de criptografia já nasce na 01** (`comum/criptografia`), porque o
+  `motivo` de cancelamento/remarcação/falta é dado clínico e não podia esperar.
+  Esta change a **estende** para o texto da evolução — não cria outra. A cobertura
+  obrigatória passa a ser: texto de evolução **e** motivo de atendimento.
 - Rota de prontuário marcada como dinâmica e sem cache no Next, explicitamente.
 - Data e hora automáticas, não editáveis.
 - Sem exclusão. Correção gera nova versão com o registro anterior preservado e
@@ -44,10 +48,12 @@ Cobre RF12 e RF13.
 
 Pontos a fixar:
 
-- Receita realizada é a soma do valor congelado dos atendimentos `REALIZADO` no
-  período. Nada de recalcular pelo valor atual do paciente.
-- Definir explicitamente se `FALTA` é cobrado. Isso é política da profissional,
-  não detalhe técnico — perguntar antes de implementar.
+- Receita realizada é a soma do valor congelado dos atendimentos `REALIZADO` **e**
+  `FALTA` no período. `CANCELADO` e `REMARCADO` não contam. Nada de recalcular
+  pelo valor atual do paciente.
+- **Decidido pela cliente (01-fundacao): falta é cobrada.** Não é mais pergunta em
+  aberto. Um atendimento `REMARCADO` nunca soma — quem soma é o `AGENDADO` que o
+  substituiu, quando virar `REALIZADO` ou `FALTA`.
 - Receita prevista do mês a partir dos atendimentos `AGENDADO` restantes.
 - Comparativo mês a mês e por paciente.
 - Gráficos com os tokens do Raíz, não com a paleta default da biblioteca.
