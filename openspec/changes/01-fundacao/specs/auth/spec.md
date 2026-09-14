@@ -26,7 +26,8 @@ ou comando administrativo.
 
 O sistema SHALL autenticar por e-mail e senha, com a senha armazenada em hash
 Argon2id. O sistema MUST responder de forma indistinguível para e-mail
-inexistente e senha incorreta.
+inexistente e senha incorreta, tanto no corpo e no status quanto no tempo de
+resposta.
 
 #### Scenario: Credencial válida
 
@@ -43,6 +44,19 @@ inexistente e senha incorreta.
 - THEN a API responde `401` com a mesma mensagem genérica usada para e-mail
       desconhecido
 - AND registra evento `LOGIN_FALHA` na trilha de auditoria
+
+#### Scenario: Tempo de resposta indistinguível
+
+- GIVEN um e-mail inexistente e um e-mail existente com senha incorreta
+- WHEN cada um é enviado a `POST /api/v1/auth/login`
+- THEN a API aplica o mesmo piso de tempo às duas respostas
+- AND verifica a senha contra um hash Argon2id de descarte quando o e-mail não
+      existe, em vez de responder sem calcular o hash
+- AND as duas respostas têm o mesmo status e o mesmo corpo
+- AND o piso não se aplica ao `204` de credencial válida, que já se distingue
+      pelo status e pelo cookie de sessão
+- AND o piso não se aplica a `422` de payload inválido nem ao `429` do rate
+      limit, que são recusados antes de consultar qualquer conta
 
 #### Scenario: Tentativas repetidas
 

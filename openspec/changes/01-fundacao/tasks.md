@@ -21,12 +21,12 @@
 
 ## 3. Autenticação
 
-- [ ] 3.1 Modelos `Usuario` e `Sessao` no Prisma e provisionamento da credencial única via seed
-- [ ] 3.2 Hash Argon2id com `@node-rs/argon2` e verificação de resposta indistinguível
-- [ ] 3.3 Sessão em tabela e cookie `HttpOnly` + `Secure` + `SameSite=Strict`
-- [ ] 3.4 `AuthGuard` global com decorator `@Publico()` para login e health
-- [ ] 3.5 Expiração por inatividade de 30 minutos com renovação a cada requisição
-- [ ] 3.6 Rate limit de cinco tentativas por IP em cinco minutos no endpoint de login
+- [x] 3.1 Modelos `Usuario` e `Sessao` no Prisma e provisionamento da credencial única via seed
+- [x] 3.2 Hash Argon2id com `@node-rs/argon2` e verificação de resposta indistinguível
+- [x] 3.3 Sessão em tabela e cookie `HttpOnly` + `Secure` + `SameSite=Strict`
+- [x] 3.4 `AuthGuard` global com decorator `@Publico()` para login e health
+- [x] 3.5 Expiração por inatividade de 30 minutos com renovação a cada requisição
+- [x] 3.6 Rate limit de cinco tentativas por IP em cinco minutos no endpoint de login
 - [ ] 3.7 Middleware do Next redirecionando rota `(app)` sem sessão para o login
 - [ ] 3.8 Tela de login com o tema Raíz
 - [ ] 3.9 Aviso de expiração próxima com opção de continuar conectada

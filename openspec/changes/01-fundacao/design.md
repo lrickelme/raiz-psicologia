@@ -6,7 +6,8 @@ Nomes de modelo em PascalCase no Prisma, tabelas em snake_case via `@@map`.
 
 ```
 Usuario      id, email, senhaHash, nome, criadoEm
-Sessao       id, usuarioId, expiraEm, criadoEm        -- sessão de login
+Sessao       id, usuarioId, tokenHash, expiraEm, criadoEm   -- sessão de login;
+                                                -- o cookie leva o token, a tabela só o SHA-256
 Paciente     id, nome, telefone, email, nascimento,
              valorConsultaPadrao Decimal @db.Decimal(10,2),
              observacoes, status(ATIVO|ARQUIVADO), criadoEm, atualizadoEm
