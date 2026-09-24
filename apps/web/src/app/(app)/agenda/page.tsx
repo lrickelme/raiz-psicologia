@@ -1,24 +1,25 @@
-import { AreaConteudo } from "@/components/shell/area-conteudo";
-import { CabecalhoPagina } from "@/components/shell/cabecalho-pagina";
-import { Botao } from "@/components/ui/botao";
-import { Card } from "@/components/ui/card";
+import { hojeLocal } from "@raiz/shared";
+import type { Metadata } from "next";
+import { cookies } from "next/headers";
+import { Agenda } from "@/features/agenda/agenda";
+import { COOKIE_ENCERRADOS, COOKIE_VISAO, ehVisao } from "@/features/agenda/calendario";
 
-export default function AgendaPage() {
+export const metadata: Metadata = { title: "Agenda · Raíz" };
+
+// Dado de paciente: nunca em cache estático (project.md).
+export const dynamic = "force-dynamic";
+
+export default async function AgendaPage({ searchParams }: PageProps<"/agenda">) {
+  const preferencias = await cookies();
+  const salva = preferencias.get(COOKIE_VISAO)?.value;
+  const { novo } = await searchParams;
   return (
-    <>
-      <CabecalhoPagina
-        titulo="Agenda"
-        descricao="Visão semanal dos atendimentos"
-        acoes={<Botao>+ Nova consulta</Botao>}
-      />
-      <AreaConteudo>
-        <Card>
-          <p className="text-raiz-corpo text-raiz-texto-terciario">
-            O calendário (visões diária, semanal e mensal) é construído na seção 6
-            desta change.
-          </p>
-        </Card>
-      </AreaConteudo>
-    </>
+    <Agenda
+      // Semanal é o padrão ao abrir o módulo (spec agenda).
+      visaoInicial={ehVisao(salva) ? salva : "semana"}
+      encerradosInicial={preferencias.get(COOKIE_ENCERRADOS)?.value === "1"}
+      hojeServidor={hojeLocal()}
+      abrirNovo={novo === "1"}
+    />
   );
 }

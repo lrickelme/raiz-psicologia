@@ -1,20 +1,23 @@
+import Link from "next/link";
 import { Folha } from "./folha";
 import { NavSidebar } from "./nav-sidebar";
 
 type Perfil = { nome: string; registro: string; iniciais: string };
 
-// Preenchido pela sessão (GET /api/v1/auth/sessao) a partir da seção 3.
-const perfilPlaceholder: Perfil = { nome: "Profissional", registro: "CRP —", iniciais: "PR" };
-
-export function Sidebar({ perfil = perfilPlaceholder }: { perfil?: Perfil }) {
+export function Sidebar({ perfil }: { perfil: Perfil }) {
   return (
     <aside className="sticky top-0 flex h-dvh w-raiz-sidebar shrink-0 flex-col gap-[22px] bg-raiz-marrom px-4 py-[22px]">
-      <div className="flex items-center gap-[11px] px-1.5 py-1">
+      {/* Contorno em areia: o vinho usado no resto do app some sobre o marrom. */}
+      <Link
+        href="/"
+        aria-label="Raíz — ir para o Dashboard"
+        className="flex items-center gap-[11px] self-start rounded-raiz-campo px-1.5 py-1 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-raiz-areia"
+      >
         <Folha tamanho={34} />
         <span className="font-raiz-display text-raiz-marca font-bold text-raiz-areia">
           Raíz
         </span>
-      </div>
+      </Link>
 
       <NavSidebar />
 

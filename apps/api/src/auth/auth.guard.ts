@@ -5,6 +5,7 @@ import {
   UnauthorizedException,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
+import { HEADER_SESSAO_EXPIRA } from "@raiz/shared";
 import type { FastifyReply } from "fastify";
 import { COOKIE_SESSAO, OPCOES_COOKIE } from "./auth.constantes";
 import { PUBLICO } from "./publico.decorator";
@@ -39,12 +40,14 @@ export class AuthGuard implements CanActivate {
     const token = request.cookies[COOKIE_SESSAO];
     if (!token) throw new UnauthorizedException(NAO_AUTENTICADO);
 
+    const reply = http.getResponse<FastifyReply>();
     const sessao = await this.sessoes.validarERenovar(token);
     if (!sessao) {
-      http.getResponse<FastifyReply>().clearCookie(COOKIE_SESSAO, OPCOES_COOKIE);
+      reply.clearCookie(COOKIE_SESSAO, OPCOES_COOKIE);
       throw new UnauthorizedException(NAO_AUTENTICADO);
     }
 
+    reply.header(HEADER_SESSAO_EXPIRA, sessao.expiraEm.toISOString());
     request.sessao = sessao;
     return true;
   }

@@ -32,3 +32,83 @@ model Sessao {
   @@index([expiraEm])
   @@map("sessao")
 }
+
+/// Trilha de auditoria (spec auth, "Trilha de auditoria"). Somente-inserção:
+/// a migration revoga UPDATE/DELETE/TRUNCATE e um gatilho recusa as três
+/// operações até para o dono da tabela. `tipoEvento` é texto, não enum, para
+/// que um evento novo não exija migration — os valores vivem em
+/// `auditoria/eventos.ts`.
+model Auditoria {
+  id          String   @id @default(uuid(7)) @db.Uuid
+  ocorridoEm  DateTime @default(now()) @map("ocorrido_em") @db.Timestamptz
+  tipoEvento  String   @map("tipo_evento")
+  recursoTipo String?  @map("recurso_tipo")
+  recursoId   String?  @map("recurso_id")
+  ip          String?
+  detalhe     Json     @default("{}")
+
+  @@index([ocorridoEm])
+  @@index([recursoTipo, recursoId])
+  @@map("auditoria")
+}
+
+enum StatusPaciente {
+  ATIVO
+  ARQUIVADO
+}
+
+/// Paciente nunca é excluído, só arquivado (spec pacientes). A busca por nome
+/// e telefone usa índices de expressão (`unaccent` + `pg_trgm`) criados na
+/// migration, que o Prisma não modela — ver `paciente.repository.ts`.
+model Paciente {
+  id                  String         @id @default(uuid(7)) @db.Uuid
+  nome                String
+  telefone            String?
+  email               String?
+  nascimento          DateTime?      @db.Date
+  valorConsultaPadrao Decimal        @map("valor_consulta_padrao") @db.Decimal(10, 2)
+  observacoes         String?
+  status              StatusPaciente @default(ATIVO)
+  criadoEm            DateTime       @default(now()) @map("criado_em") @db.Timestamptz
+  atualizadoEm        DateTime       @updatedAt @map("atualizado_em") @db.Timestamptz
+  atendimentos        Atendimento[]
+
+  @@index([status])
+  @@map("paciente")
+}
+
+enum StatusAtendimento {
+  AGENDADO
+  REALIZADO
+  CANCELADO
+  REMARCADO
+  FALTA
+}
+
+/// A consulta clínica (design.md: `Sessao` é a sessão de login). Um só registro
+/// por ciclo de vida, exceto na remarcação, que encerra este e cria outro
+/// apontando para ele. Constraints que o Prisma não modela — `EXCLUDE` contra
+/// sobreposição, duração, motivo obrigatório nos encerramentos — estão na
+/// migration `atendimento`.
+model Atendimento {
+  id            String            @id @default(uuid(7)) @db.Uuid
+  pacienteId    String            @map("paciente_id") @db.Uuid
+  paciente      Paciente          @relation(fields: [pacienteId], references: [id], onDelete: Restrict)
+  inicio        DateTime          @db.Timestamptz
+  fim           DateTime          @db.Timestamptz
+  status        StatusAtendimento @default(AGENDADO)
+  /// Congelado no agendamento: reajuste do paciente não retroage (spec pacientes).
+  valor         Decimal           @db.Decimal(10, 2)
+  /// Dado clínico, cifrado pela extensão `comum/criptografia`.
+  motivo        String?
+  /// Único: um atendimento é substituído no máximo uma vez.
+  remarcadoDeId String?           @unique @map("remarcado_de_id") @db.Uuid
+  remarcadoDe   Atendimento?      @relation("Remarcacao", fields: [remarcadoDeId], references: [id], onDelete: Restrict)
+  remarcadoPara Atendimento?      @relation("Remarcacao")
+  criadoEm      DateTime          @default(now()) @map("criado_em") @db.Timestamptz
+  atualizadoEm  DateTime          @updatedAt @map("atualizado_em") @db.Timestamptz
+
+  @@index([inicio])
+  @@index([pacienteId, inicio])
+  @@map("atendimento")
+}

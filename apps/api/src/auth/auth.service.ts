@@ -6,6 +6,8 @@ import {
   UnauthorizedException,
 } from "@nestjs/common";
 import type { LoginInput } from "@raiz/shared";
+import { AuditoriaService } from "../auditoria/auditoria.service";
+import { EventoAuditoria } from "../auditoria/eventos";
 import { LOGIN_PISO_MS } from "../comum/config";
 import { PrismaService } from "../prisma/prisma.service";
 import { gerarHashSenha, verificarSenha } from "./senha";
@@ -44,6 +46,7 @@ export class AuthService implements OnModuleInit {
     private readonly prisma: PrismaService,
     private readonly sessoes: SessaoStore,
     private readonly tentativas: TentativasLogin,
+    private readonly auditoria: AuditoriaService,
   ) {}
 
   async onModuleInit(): Promise<void> {
@@ -84,11 +87,25 @@ export class AuthService implements OnModuleInit {
 
     if (usuario === null || !senhaConfere) {
       this.tentativas.registrarFalha(ip);
+      // Mesmo registro nos dois casos, sem o id da conta: a gravação custa o
+      // mesmo tempo e a trilha não vira oráculo de quais e-mails existem.
+      await this.auditoria.registrar({
+        tipoEvento: EventoAuditoria.LOGIN_FALHA,
+        ip,
+        detalhe: { email },
+      });
       throw new UnauthorizedException(CREDENCIAL_INVALIDA);
     }
 
     this.tentativas.limpar(ip);
     await this.sessoes.limparExpiradas();
-    return this.sessoes.criar(usuario.id);
+    const token = await this.sessoes.criar(usuario.id);
+    await this.auditoria.registrar({
+      tipoEvento: EventoAuditoria.LOGIN_SUCESSO,
+      ip,
+      recursoTipo: "USUARIO",
+      recursoId: usuario.id,
+    });
+    return token;
   }
 }

@@ -8,8 +8,15 @@ import {
   Res,
   UseGuards,
 } from "@nestjs/common";
-import { loginSchema, type LoginInput, type SessaoCorrente } from "@raiz/shared";
+import {
+  HEADER_SESSAO_EXPIRA,
+  loginSchema,
+  type LoginInput,
+  type SessaoCorrente,
+} from "@raiz/shared";
 import type { FastifyReply, FastifyRequest } from "fastify";
+import { AuditoriaService } from "../auditoria/auditoria.service";
+import { EventoAuditoria } from "../auditoria/eventos";
 import { ZodValidationPipe } from "../comum/zod-validation.pipe";
 import { COOKIE_SESSAO, OPCOES_COOKIE } from "./auth.constantes";
 import { AuthService } from "./auth.service";
@@ -23,6 +30,7 @@ export class AuthController {
   constructor(
     private readonly auth: AuthService,
     private readonly sessoes: SessaoStore,
+    private readonly auditoria: AuditoriaService,
   ) {}
 
   @Publico()
@@ -42,10 +50,19 @@ export class AuthController {
   @HttpCode(204)
   async logout(
     @Req() request: FastifyRequest,
+    @SessaoDaRequisicao() sessao: SessaoComUsuario,
     @Res({ passthrough: true }) reply: FastifyReply,
   ): Promise<void> {
     const token = request.cookies[COOKIE_SESSAO];
     if (token) await this.sessoes.destruir(token);
+    await this.auditoria.registrar({
+      tipoEvento: EventoAuditoria.LOGOUT,
+      ip: request.ip,
+      recursoTipo: "USUARIO",
+      recursoId: sessao.usuario.id,
+    });
+    // O guard anunciou a renovação antes de a sessão ser destruída aqui.
+    reply.removeHeader(HEADER_SESSAO_EXPIRA);
     reply.clearCookie(COOKIE_SESSAO, OPCOES_COOKIE);
   }
 

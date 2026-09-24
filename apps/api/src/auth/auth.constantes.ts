@@ -1,6 +1,6 @@
 import type { CookieSerializeOptions } from "@fastify/cookie";
 
-export const COOKIE_SESSAO = "raiz_sessao";
+export { COOKIE_SESSAO } from "@raiz/shared";
 
 /** Expiração por inatividade (spec auth, "Expiração de sessão por inatividade"). */
 export const SESSAO_INATIVIDADE_MS = 30 * 60 * 1000;

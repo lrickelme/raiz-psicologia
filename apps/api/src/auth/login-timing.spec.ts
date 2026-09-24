@@ -2,6 +2,7 @@ import "reflect-metadata";
 import { UnauthorizedException, type ExecutionContext } from "@nestjs/common";
 import { loginSchema } from "@raiz/shared";
 import { beforeAll, describe, expect, it } from "vitest";
+import type { AuditoriaService } from "../auditoria/auditoria.service";
 import { LOGIN_PISO_MS } from "../comum/config";
 import { ZodValidationPipe } from "../comum/zod-validation.pipe";
 import { AuthService } from "./auth.service";
@@ -63,12 +64,16 @@ describe("piso de tempo do login", () => {
       criar: async () => "token-de-teste",
       limparExpiradas: async () => {},
     };
+    const auditoria: Pick<AuditoriaService, "registrar"> = {
+      registrar: async () => {},
+    };
 
     tentativas = new TentativasLogin();
     auth = new AuthService(
       prisma as never,
       sessoes as SessaoStore,
       tentativas,
+      auditoria as AuditoriaService,
     );
     await auth.onModuleInit();
   });

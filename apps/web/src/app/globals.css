@@ -32,6 +32,8 @@
   --color-raiz-musgo-suave: #e7ecdc; /* fundo do pill "Realizada" */
   --color-raiz-ambar-suave: #f3e8d2; /* fundo do pill "Agendada" */
   --color-raiz-vinho-suave: #f1dedc; /* fundo do pill "Cancelada" */
+  --color-raiz-musgo-escuro: #3f4a33; /* texto do bloco "Realizada" na agenda */
+  --color-raiz-ambar-escuro: #6b4f1e; /* texto do bloco "Agendada" na agenda */
 
   /* --- Tipografia --- */
   --font-raiz-display: var(--font-bricolage), sans-serif;

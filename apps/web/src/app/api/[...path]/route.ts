@@ -1,4 +1,6 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { sincronizarCookieExpira } from "@/features/auth/cookie-expira";
+import { API_INTERNAL_URL } from "@/lib/api-interna";
 
 /**
  * BFF: o navegador só fala com o Next. Essa rota repassa para o NestJS em
@@ -8,8 +10,6 @@ import { NextRequest } from "next/server";
  * Nunca cacheado: toda rota autenticada é dinâmica (project.md).
  */
 export const dynamic = "force-dynamic";
-
-const API_INTERNAL_URL = process.env.API_INTERNAL_URL ?? "http://localhost:3333";
 
 async function proxy(request: NextRequest, path: string[]): Promise<Response> {
   const targetUrl = `${API_INTERNAL_URL}/api/${path.join("/")}${request.nextUrl.search}`;
@@ -27,20 +27,19 @@ async function proxy(request: NextRequest, path: string[]): Promise<Response> {
     body,
   });
 
+  // A cópia já leva os Set-Cookie da API, um por um.
   const responseHeaders = new Headers(upstream.headers);
   responseHeaders.delete("content-encoding");
   responseHeaders.delete("content-length");
   responseHeaders.delete("transfer-encoding");
 
-  for (const cookie of upstream.headers.getSetCookie()) {
-    responseHeaders.append("set-cookie", cookie);
-  }
-
-  return new Response(upstream.body, {
+  const response = new NextResponse(upstream.body, {
     status: upstream.status,
     statusText: upstream.statusText,
     headers: responseHeaders,
   });
+  sincronizarCookieExpira(upstream, response);
+  return response;
 }
 
 type RouteParams = { params: Promise<{ path: string[] }> };

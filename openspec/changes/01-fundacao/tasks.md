@@ -18,6 +18,7 @@
 - [x] 2.3 Layout `(app)/layout.tsx` com sidebar, cabeçalho e área de conteúdo, fiel ao guia Raíz
 - [x] 2.4 Rotas com placeholders para Dashboard, Agenda, Pacientes, Estudos, Lembretes, Financeiro
 - [x] 2.5 Comparar shell renderizado contra `design-ref/` e corrigir desvios de espaçamento
+- [x] 2.6 Logo Raíz na sidebar como link para o Dashboard (/), com aria-label e foco visível
 
 ## 3. Autenticação
 
@@ -27,52 +28,52 @@
 - [x] 3.4 `AuthGuard` global com decorator `@Publico()` para login e health
 - [x] 3.5 Expiração por inatividade de 30 minutos com renovação a cada requisição
 - [x] 3.6 Rate limit de cinco tentativas por IP em cinco minutos no endpoint de login
-- [ ] 3.7 Middleware do Next redirecionando rota `(app)` sem sessão para o login
-- [ ] 3.8 Tela de login com o tema Raíz
-- [ ] 3.9 Aviso de expiração próxima com opção de continuar conectada
-- [ ] 3.10 Teste de integração: login válido, senha errada, sessão expirada, `429`
+- [x] 3.7 Middleware do Next redirecionando rota `(app)` sem sessão para o login
+- [x] 3.8 Tela de login com o tema Raíz
+- [x] 3.9 Aviso de expiração próxima com opção de continuar conectada
+- [x] 3.10 Teste de integração: login válido, senha errada, sessão expirada, `429`
 
 ## 4. Auditoria e criptografia
 
-- [ ] 4.1 Modelo `Auditoria` com campo `Json` para detalhe
-- [ ] 4.2 Revogar `UPDATE` e `DELETE` na tabela para o usuário de aplicação do Postgres
-- [ ] 4.3 `AuditoriaInterceptor` global gravando acessos a paciente e atendimento
-- [ ] 4.4 Eventos `LOGIN_SUCESSO` e `LOGIN_FALHA`
-- [ ] 4.5 Teste confirmando que alteração de registro de auditoria falha
-- [ ] 4.6 Extensão Prisma de criptografia de coluna (AES-256-GCM) em `comum/criptografia`, chave via variável de ambiente, ausência da chave impede o boot
-- [ ] 4.7 Teste: campo criptografado não aparece em claro em leitura direta da coluna e é restaurado pela extensão
+- [x] 4.1 Modelo `Auditoria` com campo `Json` para detalhe
+- [x] 4.2 Revogar `UPDATE` e `DELETE` na tabela para o usuário de aplicação do Postgres
+- [x] 4.3 `AuditoriaInterceptor` global gravando acessos a paciente e atendimento
+- [x] 4.4 Eventos `LOGIN_SUCESSO` e `LOGIN_FALHA`
+- [x] 4.5 Teste confirmando que alteração de registro de auditoria falha
+- [x] 4.6 Extensão Prisma de criptografia de coluna (AES-256-GCM) em `comum/criptografia`, chave via variável de ambiente, ausência da chave impede o boot
+- [x] 4.7 Teste: campo criptografado não aparece em claro em leitura direta da coluna e é restaurado pela extensão
 
 ## 5. Pacientes
 
-- [ ] 5.1 Modelo `Paciente` com índice para busca sem acento (`unaccent` + `pg_trgm`)
-- [ ] 5.2 Schemas Zod de paciente em `packages/shared`
-- [ ] 5.3 CRUD, arquivamento e reativação conforme a spec
-- [ ] 5.4 Listagem paginada com busca e filtro de status, teto de 50 por página
-- [ ] 5.5 Cancelamento de atendimentos futuros ao arquivar, com confirmação
-- [ ] 5.6 Serialização de `Decimal` como string na fronteira da API
-- [ ] 5.7 Tela de listagem com busca
-- [ ] 5.8 Formulário de criação e edição com `react-hook-form` + resolver Zod compartilhado
-- [ ] 5.9 Perfil do paciente com dados cadastrais e histórico, com motivo dos encerramentos e cadeia de remarcações legível
-- [ ] 5.10 Aviso de homônimo antes de confirmar cadastro
-- [ ] 5.11 Teste de integração: cadastro mínimo, valor inválido, arquivar com agenda futura
+- [x] 5.1 Modelo `Paciente` com índice para busca sem acento (`unaccent` + `pg_trgm`)
+- [x] 5.2 Schemas Zod de paciente em `packages/shared`
+- [x] 5.3 CRUD, arquivamento e reativação conforme a spec
+- [x] 5.4 Listagem paginada com busca e filtro de status, teto de 50 por página
+- [x] 5.5 Cancelamento de atendimentos futuros ao arquivar, com confirmação
+- [x] 5.6 Serialização de `Decimal` como string na fronteira da API
+- [x] 5.7 Tela de listagem com busca
+- [x] 5.8 Formulário de criação e edição com `react-hook-form` + resolver Zod compartilhado
+- [x] 5.9 Perfil do paciente com dados cadastrais e histórico, com motivo dos encerramentos e cadeia de remarcações legível
+- [x] 5.10 Aviso de homônimo antes de confirmar cadastro
+- [x] 5.11 Teste de integração: cadastro mínimo, valor inválido, arquivar com agenda futura
 
 ## 6. Agenda
 
-- [ ] 6.1 Modelo `Atendimento` (status com `REMARCADO`, `motivo` criptografado, `remarcadoDeId`) e migration SQL manual com a constraint `EXCLUDE` excluindo `CANCELADO` e `REMARCADO`
-- [ ] 6.2 Repositório com consulta por intervalo, intervalo obrigatório sem `pacienteId`
-- [ ] 6.3 Criação com duração mínima, valor congelado e tradução do erro `23P01` para `409`
-- [ ] 6.4 Transições de status com as recusas especificadas; `motivo` obrigatório (`422`) em cancelar, remarcar e falta
-- [ ] 6.5 `POST /:id/remarcar` transacional: original vira `REMARCADO`, novo `AGENDADO` herda duração e valor congelado com `remarcadoDeId`
-- [ ] 6.6 Componente de calendário com visão diária, semanal e mensal
-- [ ] 6.7 Persistir visão preferida
-- [ ] 6.8 Criar atendimento por seleção de intervalo no calendário
-- [ ] 6.9 Remarcar por arrastar: pedir motivo e validar sobreposição antes de confirmar, aplicando o encadeamento
-- [ ] 6.10 `BadgeStatus` com `REMARCADO` e `FALTA` nas cores aprovadas (falta com peso de evento cobrado; remarcado distinto de cancelado)
-- [ ] 6.11 Indicador de excedente na visão mensal com atalho para a visão diária
-- [ ] 6.12 Painel de atendimentos do dia no dashboard, com estado vazio
-- [ ] 6.13 Teste de integração: sobreposição, encaixe adjacente, horário liberado por cancelamento e por remarcação, remarcação encadeada em transação, encerramento sem motivo recusado
-- [ ] 6.14 Teste de fuso: atendimento na virada do dia e na virada da semana, com `TZ` do processo diferente de São Paulo
-- [ ] 6.15 Teste de carga: dois anos de atendimentos, abertura de visão abaixo de dois segundos
+- [x] 6.1 Modelo `Atendimento` (status com `REMARCADO`, `motivo` criptografado, `remarcadoDeId`) e migration SQL manual com a constraint `EXCLUDE` excluindo `CANCELADO` e `REMARCADO`
+- [x] 6.2 Repositório com consulta por intervalo, intervalo obrigatório sem `pacienteId`
+- [x] 6.3 Criação com duração mínima, valor congelado e tradução do erro `23P01` para `409`
+- [x] 6.4 Transições de status com as recusas especificadas; `motivo` obrigatório (`422`) em cancelar, remarcar e falta
+- [x] 6.5 `POST /:id/remarcar` transacional: original vira `REMARCADO`, novo `AGENDADO` herda duração e valor congelado com `remarcadoDeId`
+- [x] 6.6 Componente de calendário com visão diária, semanal e mensal
+- [x] 6.7 Persistir visão preferida
+- [x] 6.8 Criar atendimento por seleção de intervalo no calendário
+- [x] 6.9 Remarcar por arrastar: pedir motivo e validar sobreposição antes de confirmar, aplicando o encadeamento
+- [x] 6.10 `BadgeStatus` com `REMARCADO` e `FALTA` nas cores aprovadas (falta com peso de evento cobrado; remarcado distinto de cancelado)
+- [x] 6.11 Indicador de excedente na visão mensal com atalho para a visão diária
+- [x] 6.12 Painel de atendimentos do dia no dashboard, com estado vazio
+- [x] 6.13 Teste de integração: sobreposição, encaixe adjacente, horário liberado por cancelamento e por remarcação, remarcação encadeada em transação, encerramento sem motivo recusado
+- [x] 6.14 Teste de fuso: atendimento na virada do dia e na virada da semana, com `TZ` do processo diferente de São Paulo
+- [x] 6.15 Teste de carga: dois anos de atendimentos, abertura de visão abaixo de dois segundos
 
 ## 7. Fechamento
 

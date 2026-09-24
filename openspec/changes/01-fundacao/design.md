@@ -94,6 +94,52 @@ reaproveita para o texto da evolução em vez de criar outra.
 Custo: `motivo` não é pesquisável nem filtrável no SQL. Aceitável — ele é lido
 no contexto de um atendimento, nunca buscado.
 
+### Auditoria imutável por gatilho, não só por privilégio
+
+A tarefa pedia revogar `UPDATE` e `DELETE` para o usuário de aplicação. Hoje
+esse usuário é o superusuário criado pela imagem do Postgres, e superusuário
+ignora privilégios — o `REVOKE` sozinho não teria efeito. A migration revoga
+(`UPDATE`, `DELETE`, `TRUNCATE`) e acrescenta um gatilho que recusa as três
+operações para qualquer papel, inclusive o dono da tabela. O `REVOKE` passa a
+valer por conta própria quando a aplicação conectar com um papel sem
+privilégios de administrador — mudança de implantação, fora desta change.
+
+A trilha registra também `LOGOUT`, além de `LOGIN_SUCESSO` e `LOGIN_FALHA`: a
+spec pede "todo evento de autenticação". O acesso a recurso entra por
+`@Auditado("PACIENTE" | "ATENDIMENTO")` no controller, lido pelo interceptor
+global; a resposta só sai depois do registro gravado.
+
+A extensão de criptografia recusa, em vez de ignorar, os dois casos que
+gravariam ou buscariam errado: escrita aninhada em modelo cifrado (a partir de
+outro modelo) e filtro por campo cifrado em `where`. Leitura por `include`
+é decifrada normalmente.
+
+### Agenda: decisões tomadas na implementação
+
+- `de` e `ate` em `GET /atendimentos` são **datas de calendário de São Paulo**
+  (AAAA-MM-DD, inclusivas), não instantes. Quem converte para `timestamptz` é
+  a API, com `date-fns-tz`; o cliente nunca calcula meia-noite no próprio fuso.
+  Sem `pacienteId`, a janela é de no máximo 62 dias (mês com margem).
+- Duração entre 15 minutos e **12 horas** (`CHECK` na tabela). O teto não vem
+  da spec: é o que deixa a consulta por intervalo limitar `inicio` por baixo e
+  usar o índice. Encerramentos exigem `motivo` também por `CHECK`.
+- O `motivo` só vem na consulta por paciente (histórico); a grade do
+  calendário não o recebe, e toda leitura dele fica na trilha pelos ids.
+- Transição inválida (atendimento já encerrado) é `409`; conclusão antes do
+  término e falta antes do início são `422`.
+- `POST /pacientes/:id/arquivar` aceita `{ motivoCancelamento }`. Sem ele e
+  com atendimentos futuros, responde `409` com a lista `pendentes`; com ele,
+  cancela todos e arquiva na mesma transação, gravando cada cancelamento na
+  trilha como escrita de `ATENDIMENTO`.
+- O `409` de sobreposição traz `conflitante` e `proximoHorarioLivre` (mesma
+  duração, a partir do horário pedido).
+- Cores: `FALTA` em pill cheio vinho (evento cobrado, mais pesado que o
+  cancelamento em vinho suave); `REMARCADO` neutro em bege. Aprovadas pela
+  cliente em 24/09/2026.
+- A semana mostra os sete dias, de segunda a domingo; a grade vai das 07h às
+  22h e abre rolada nas 08h. Visão preferida e "mostrar cancelados" ficam em
+  cookie, para o servidor já renderizar a agenda como a profissional deixou.
+
 ### Zod compartilhado em vez de class-validator
 
 `class-validator` com DTOs decorados é o padrão do Nest, mas os schemas ficariam
@@ -114,6 +160,23 @@ requisitos direto e mantém o token fora do alcance de JavaScript.
 
 Bibliotecas de auth completas (NextAuth e afins) resolvem OAuth e multiusuário,
 problemas que este projeto não tem, e cobram em configuração e indireção.
+
+### Expiração visível à interface
+
+O token é `HttpOnly`, então a interface não sabe sozinha quando a sessão vence.
+Toda resposta autenticada da API leva `X-Sessao-Expira-Em`; o BFF e o `proxy.ts`
+do Next o copiam para o cookie `raiz_sessao_expira`, sem `HttpOnly` e só com o
+instante. O aviso de expiração relê esse cookie a cada segundo, o que cobre de
+graça a renovação feita por outra aba ou por qualquer chamada à API.
+
+O `proxy.ts` valida a sessão contra a API em toda navegação — navegar é
+atividade e precisa renovar —, mas o matcher exclui prefetch: renovar por
+prefetch deixaria os links visíveis mantendo a sessão viva sem ninguém na tela.
+O layout `(app)` valida de novo, porque é ele quem barra a renderização de
+prefetch sem sessão.
+
+Alternativa descartada: endpoint de consulta que não renova. Contradiz "renovada
+a cada requisição válida" da spec e exigiria abrir exceção no guard.
 
 ### Decimal na fronteira
 

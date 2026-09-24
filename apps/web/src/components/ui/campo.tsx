@@ -1,6 +1,7 @@
-import { useId, type InputHTMLAttributes } from "react";
+import { useId, type ComponentProps } from "react";
 
-type CampoProps = InputHTMLAttributes<HTMLInputElement> & {
+// `ComponentProps` inclui `ref`, que o `register` do react-hook-form repassa.
+type CampoProps = ComponentProps<"input"> & {
   rotulo: string;
   erro?: string;
   descricao?: string;
