@@ -77,8 +77,8 @@
 
 ## 7. Fechamento
 
-- [ ] 7.1 Seed de desenvolvimento com dados fictícios
-- [ ] 7.2 Conferir cada cenário das três delta specs contra o comportamento real
-- [ ] 7.3 Confirmar que nenhuma rota autenticada está sendo cacheada estaticamente
-- [ ] 7.4 README com instruções de execução local
-- [ ] 7.5 `openspec validate 01-fundacao`
+- [x] 7.1 Seed de desenvolvimento com dados fictícios
+- [x] 7.2 Conferir cada cenário das três delta specs contra o comportamento real
+- [x] 7.3 Confirmar que nenhuma rota autenticada está sendo cacheada estaticamente
+- [x] 7.4 README com instruções de execução local
+- [x] 7.5 `openspec validate 01-fundacao`

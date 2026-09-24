@@ -32,6 +32,9 @@ async function proxy(request: NextRequest, path: string[]): Promise<Response> {
   responseHeaders.delete("content-encoding");
   responseHeaders.delete("content-length");
   responseHeaders.delete("transfer-encoding");
+  // Resposta com dado de paciente não pode ficar em cache de navegador nem de
+  // proxy intermediário; `force-dynamic` só cobre o cache do próprio Next.
+  responseHeaders.set("cache-control", "private, no-store");
 
   const response = new NextResponse(upstream.body, {
     status: upstream.status,

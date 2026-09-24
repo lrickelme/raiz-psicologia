@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BotaoSair } from "@/features/auth/botao-sair";
 import { Folha } from "./folha";
 import { NavSidebar } from "./nav-sidebar";
 
@@ -36,6 +37,7 @@ export function Sidebar({ perfil }: { perfil: Perfil }) {
           </div>
           <div className="text-raiz-legenda text-raiz-texto-inativo">{perfil.registro}</div>
         </div>
+        <BotaoSair />
       </div>
     </aside>
   );

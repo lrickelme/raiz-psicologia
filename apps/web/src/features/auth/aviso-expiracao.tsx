@@ -4,6 +4,7 @@ import { COOKIE_SESSAO_EXPIRA } from "@raiz/shared";
 import { useEffect, useState } from "react";
 import { Botao } from "@/components/ui/botao";
 import { Modal } from "@/components/ui/modal";
+import { sair } from "./botao-sair";
 
 const AVISO_MS = 2 * 60 * 1000;
 
@@ -63,11 +64,6 @@ export function AvisoExpiracao() {
     } finally {
       setRenovando(false);
     }
-  }
-
-  async function sair() {
-    await fetch("/api/v1/auth/logout", { method: "POST" });
-    window.location.replace("/login");
   }
 
   const aberto = restanteMs !== null && restanteMs <= AVISO_MS;

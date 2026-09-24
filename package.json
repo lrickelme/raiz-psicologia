@@ -11,6 +11,7 @@
     "db:down": "docker compose down",
     "migrate": "pnpm --filter @raiz/api prisma:migrate",
     "seed": "pnpm --filter @raiz/api prisma:seed",
+    "seed:dev": "pnpm --filter @raiz/api seed:dev",
     "build": "pnpm --filter @raiz/shared build && pnpm -r --filter=!@raiz/shared build"
   },
   "devDependencies": {
