@@ -126,6 +126,38 @@ describe("pacientes (integração)", () => {
     expect((await listar("?busca=zzz")).itens).toEqual([]);
   });
 
+  it("telefone é gravado só com dígitos, sem +55, e quantidade inválida é 422", async () => {
+    const celular = await cadastrar({ nome: "Com máscara", telefone: "+55 (83) 99322-9097" });
+    expect(celular.telefone).toBe("83993229097");
+    const fixo = await cadastrar({ nome: "Fixo", telefone: "(83) 3221-4567" });
+    expect(fixo.telefone).toBe("8332214567");
+
+    const [linha] = await prisma.$queryRaw<{ telefone: string }[]>`
+      SELECT telefone FROM paciente WHERE id = ${celular.id}::uuid`;
+    expect(linha.telefone).toBe("83993229097");
+
+    const resposta = await api("POST", "/pacientes", {
+      nome: "Oito dígitos",
+      valorConsultaPadrao: "150",
+      telefone: "9322-9097",
+    });
+    expect(resposta.statusCode).toBe(422);
+    expect(resposta.json().campos.map((c: { caminho: string }) => c.caminho)).toEqual(["telefone"]);
+
+    const alterado = await api("PATCH", `/pacientes/${fixo.id}`, { telefone: "(83) 99111-2233" });
+    expect(alterado.json().telefone).toBe("83991112233");
+  });
+
+  it("busca por telefone independe do formato do termo", async () => {
+    const alvo = await cadastrar({ nome: "Alvo", telefone: "83993229097" });
+    await cadastrar({ nome: "Outro", telefone: "(84) 98888-0000" });
+
+    for (const termo of ["(83) 99322", "83993", "99322-9097", "8399322 9097"]) {
+      const { itens } = await listar(`?busca=${encodeURIComponent(termo)}`);
+      expect(itens.map((p) => p.id), termo).toEqual([alvo.id]);
+    }
+  });
+
   it("homônimos são aceitos", async () => {
     await cadastrar({ nome: "Ana Souza" });
     await cadastrar({ nome: "Ana Souza" });

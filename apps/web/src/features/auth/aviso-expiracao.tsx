@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Botao } from "@/components/ui/botao";
 import { Modal } from "@/components/ui/modal";
 import { sair } from "./botao-sair";
+import { cederAosEditores } from "./edicao-protegida";
 
 const AVISO_MS = 2 * 60 * 1000;
 
@@ -32,7 +33,8 @@ function formatar(ms: number): string {
 
 /**
  * Avisa quando a sessão está a dois minutos de expirar por inatividade e, se
- * ninguém responder, leva ao login quando ela expira. O prazo vem do cookie
+ * ninguém responder, leva ao login quando ela expira — exceto com editor de
+ * prontuário aberto e texto pendente, que assume a reautenticação. O prazo vem do cookie
  * `COOKIE_SESSAO_EXPIRA`, relido a cada segundo: assim uma renovação feita em
  * outra aba, ou por qualquer chamada à API, chega aqui sem combinação extra.
  */
@@ -46,7 +48,12 @@ export function AvisoExpiracao() {
       if (expiraEm === null) return setRestanteMs(null);
 
       const restante = expiraEm - Date.now();
-      if (restante <= 0) return irParaLogin();
+      if (restante <= 0) {
+        // Um editor com texto não salvo reautentica sem desmontar; ir ao
+        // login destruiria a única cópia do trecho recente.
+        if (cederAosEditores()) return setRestanteMs(null);
+        return irParaLogin();
+      }
       setRestanteMs(restante);
     };
     atualizar();

@@ -4,8 +4,10 @@ export type CamposCriptografados = Partial<Record<Prisma.ModelName, readonly str
 
 /**
  * Colunas com dado clínico, cifradas em repouso (project.md, restrições
- * regulatórias). A evolução do prontuário entra aqui na change 02.
+ * regulatórias).
  */
 export const CAMPOS_CRIPTOGRAFADOS: CamposCriptografados = {
   Atendimento: ["motivo"],
+  Evolucao: ["texto"],
+  RascunhoEvolucao: ["texto"],
 };

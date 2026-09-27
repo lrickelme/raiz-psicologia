@@ -1,13 +1,23 @@
 import { Module } from "@nestjs/common";
+// Valida a configuração na subida, antes de qualquer módulo precisar dela.
+import "./comum/config";
 import { AtendimentoModule } from "./atendimento/atendimento.module";
 import { AuditoriaModule } from "./auditoria/auditoria.module";
 import { AuthModule } from "./auth/auth.module";
 import { PacienteModule } from "./paciente/paciente.module";
+import { ProntuarioModule } from "./prontuario/prontuario.module";
 import { HealthController } from "./health/health.controller";
 import { PrismaModule } from "./prisma/prisma.module";
 
 @Module({
-  imports: [PrismaModule, AuditoriaModule, AuthModule, PacienteModule, AtendimentoModule],
+  imports: [
+    PrismaModule,
+    AuditoriaModule,
+    AuthModule,
+    PacienteModule,
+    AtendimentoModule,
+    ProntuarioModule,
+  ],
   controllers: [HealthController],
 })
 export class AppModule {}

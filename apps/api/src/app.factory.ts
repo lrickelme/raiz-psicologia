@@ -6,6 +6,7 @@ import {
 } from "@nestjs/platform-fastify";
 import fastifyCookie from "@fastify/cookie";
 import { AppModule } from "./app.module";
+import { registrarContextoDaRequisicao } from "./comum/contexto-requisicao";
 import { ProblemDetailsFilter } from "./comum/problem-details.filter";
 
 /**
@@ -23,6 +24,7 @@ export async function criarApp(modulo: Type = AppModule): Promise<NestFastifyApp
   );
 
   await app.register(fastifyCookie);
+  registrarContextoDaRequisicao(app);
 
   app.setGlobalPrefix("api/v1");
   app.useGlobalFilters(new ProblemDetailsFilter());

@@ -1,4 +1,10 @@
-import type { Atendimento, Paciente } from "@raiz/shared";
+import {
+  dataLocal,
+  formatarTelefone,
+  type Atendimento,
+  type Paciente,
+  type ResumoProntuario,
+} from "@raiz/shared";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Avatar } from "@/components/ui/avatar";
@@ -31,8 +37,12 @@ export default async function PacientePage({ params }: PageProps<"/pacientes/[id
   const atendimentos = await buscarNaApi<Atendimento[]>(
     `/atendimentos?pacienteId=${encodeURIComponent(paciente.id)}`,
   );
+  const prontuario = await buscarNaApi<ResumoProntuario>(
+    `/pacientes/${encodeURIComponent(paciente.id)}/prontuario/resumo`,
+  );
   const encerrados = atendimentos.filter((a) => a.status !== "AGENDADO").length;
   const arquivado = paciente.status === "ARQUIVADO";
+  const linkProntuario = `/pacientes/${paciente.id}/prontuario`;
 
   return (
     <>
@@ -42,6 +52,12 @@ export default async function PacientePage({ params }: PageProps<"/pacientes/[id
         acoes={
           <>
             <AcoesSituacao paciente={paciente} />
+            <Link
+              href={linkProntuario}
+              className="inline-flex items-center rounded-full border-[1.5px] border-raiz-borda-forte px-5 py-[10px] text-raiz-corpo font-semibold text-raiz-marrom hover:bg-raiz-sand"
+            >
+              Abrir prontuário
+            </Link>
             <Link
               href={`/pacientes/${paciente.id}/editar`}
               className="inline-flex items-center rounded-full bg-raiz-vinho px-5 py-[11px] text-raiz-corpo font-semibold text-raiz-sobre-vinho hover:bg-raiz-vinho-escuro"
@@ -68,7 +84,7 @@ export default async function PacientePage({ params }: PageProps<"/pacientes/[id
           </div>
 
           <dl className="flex flex-col gap-[13px]">
-            <Dado rotulo="Telefone" valor={paciente.telefone} />
+            <Dado rotulo="Telefone" valor={formatarTelefone(paciente.telefone)} />
             <Dado rotulo="E-mail" valor={paciente.email} />
             <Dado
               rotulo="Nascimento"
@@ -77,6 +93,49 @@ export default async function PacientePage({ params }: PageProps<"/pacientes/[id
             <Dado rotulo="Valor/sessão" valor={formatarDinheiro(paciente.valorConsultaPadrao)} />
             <Dado rotulo="Cadastro" valor={formatarData(paciente.criadoEm)} />
           </dl>
+
+          <div className="flex flex-col gap-2 rounded-raiz-campo border border-raiz-borda p-[13px]">
+            <div className="flex items-baseline justify-between gap-3">
+              <span className="text-raiz-corpo-sm font-semibold text-raiz-marrom">Prontuário</span>
+              <span className="font-raiz-mono text-raiz-legenda text-raiz-texto-terciario">
+                {prontuario.evolucoes} {prontuario.evolucoes === 1 ? "evolução" : "evoluções"}
+              </span>
+            </div>
+            <p className="text-raiz-meta text-raiz-texto-terciario">
+              {prontuario.ultimaEvolucaoEm
+                ? `Mais recente em ${formatarData(dataLocal(prontuario.ultimaEvolucaoEm))}`
+                : "Nenhuma evolução registrada"}
+            </p>
+            <Link
+              href={linkProntuario}
+              className="text-raiz-corpo-sm font-semibold text-raiz-vinho hover:underline"
+            >
+              Abrir prontuário →
+            </Link>
+          </div>
+
+          {prontuario.guarda && (
+            <div
+              className={`flex flex-col gap-1.5 rounded-raiz-campo p-[13px] ${
+                prontuario.guarda.elegivel ? "bg-raiz-ambar-suave" : "bg-raiz-sand"
+              }`}
+            >
+              <span className="text-raiz-corpo-sm font-semibold text-raiz-marrom">
+                Guarda do prontuário
+              </span>
+              <p className="text-raiz-meta leading-[1.45] text-raiz-texto-secundario">
+                {prontuario.guarda.elegivel ? "Elegível para descarte desde " : "Elegível para descarte a partir de "}
+                <span className="font-semibold text-raiz-marrom">
+                  {formatarData(prontuario.guarda.elegivelEm)}
+                </span>
+                , pelo prazo configurado de {prontuario.guarda.prazoAnos} anos contado do último
+                registro, em {formatarData(dataLocal(prontuario.guarda.ultimoRegistroEm))}.
+              </p>
+              <p className="text-raiz-legenda text-raiz-texto-terciario">
+                Nada é apagado automaticamente: o descarte é decisão da profissional.
+              </p>
+            </div>
+          )}
 
           {paciente.observacoes && (
             <div className="flex flex-col gap-1.5">
@@ -120,7 +179,12 @@ export default async function PacientePage({ params }: PageProps<"/pacientes/[id
               {encerrados} {encerrados === 1 ? "encerrado" : "encerrados"}
             </span>
           </div>
-          <HistoricoAtendimentos atendimentos={atendimentos} />
+          <HistoricoAtendimentos
+            atendimentos={atendimentos}
+            evolucaoHref={
+              arquivado ? undefined : (atendimentoId) => `${linkProntuario}?atendimento=${atendimentoId}`
+            }
+          />
         </section>
       </div>
     </>

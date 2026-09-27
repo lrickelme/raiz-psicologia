@@ -130,6 +130,15 @@ O rascunho MUST NOT ser gravado em `localStorage`, `sessionStorage` ou IndexedDB
 texto clínico em claro no navegador contraria a criptografia de coluna que o
 resto do sistema mantém.
 
+O cliente MUST garantir que nenhum salvamento automático pendente recrie um
+rascunho já consumido. Antes de gravar a evolução, um salvamento em voo SHALL ser
+cancelado ou aguardado.
+
+Em caso de 401 durante a edição, o cliente MUST reter em memória o texto digitado
+desde o último salvamento e oferecê-lo após a reautenticação. Essa retenção MUST
+ser apenas em memória do processo da página: `localStorage`, `sessionStorage` e
+IndexedDB continuam proibidos para texto clínico.
+
 #### Scenario: Recuperação após queda
 
 - GIVEN uma evolução em edição há dez minutos, ainda não gravada
@@ -150,6 +159,27 @@ resto do sistema mantém.
 - WHEN a evolução correspondente é gravada
 - THEN o rascunho é removido
 - AND não reaparece em acessos seguintes
+
+#### Scenario: Gravar com salvamento em voo
+
+- GIVEN um salvamento automático de rascunho a caminho do servidor
+- WHEN a profissional grava a evolução antes de ele responder
+- THEN o rascunho não é recriado depois da gravação
+- AND ao reabrir o prontuário nenhum rascunho residual é oferecido
+
+#### Scenario: Sessão vence com texto não salvo
+
+- GIVEN texto digitado após o último salvamento automático
+- WHEN a sessão expira e o salvamento seguinte recebe 401
+- THEN a interface não descarta o editor nem navega para o login imediatamente
+- AND após a reautenticação o texto integral é restaurado, incluindo o trecho
+      posterior ao último salvamento
+
+#### Scenario: Retenção não persiste
+
+- GIVEN texto retido em memória após um 401
+- WHEN a aba é fechada sem reautenticar
+- THEN nada de texto clínico permanece em armazenamento do navegador
 
 ### Requirement: Exportação do prontuário
 

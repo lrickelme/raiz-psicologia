@@ -8,6 +8,7 @@ import { PrismaClient } from "@prisma/client";
 import { CAMPOS_CRIPTOGRAFADOS } from "../comum/criptografia/campos";
 import { carregarChave } from "../comum/criptografia/cifra";
 import { criptografiaDeColuna } from "../comum/criptografia/extensao";
+import { auditarLeituraDeEvolucao } from "../comum/criptografia/leitura-auditada";
 
 @Injectable()
 export class PrismaService
@@ -19,8 +20,13 @@ export class PrismaService
     // Extensão só de `query` não altera os tipos do cliente, então o objeto
     // estendido pode ocupar o lugar da instância sem mudar quem injeta
     // PrismaService. `carregarChave` lança sem a chave: a API não sobe.
+    // `this`, ainda sem a extensão, é quem grava a auditoria de leitura.
     return this.$extends(
-      criptografiaDeColuna(CAMPOS_CRIPTOGRAFADOS, carregarChave()),
+      criptografiaDeColuna(
+        CAMPOS_CRIPTOGRAFADOS,
+        carregarChave(),
+        auditarLeituraDeEvolucao(this),
+      ),
     ) as this;
   }
 

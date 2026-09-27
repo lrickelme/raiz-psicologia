@@ -27,6 +27,16 @@ const RELACOES = new Map(
 
 type Registro = Record<string, unknown>;
 
+/** Registro de `modelo` que acabou de ter algum campo decifrado. */
+export type Decifrado = { modelo: Prisma.ModelName; registro: Registro };
+
+/**
+ * Chamado depois de cada operação que decifrou algo, antes de o resultado
+ * chegar a quem consultou. Se lançar, a consulta falha: é o gancho da
+ * auditoria de leitura, e dado entregue sem rastro é pior que erro.
+ */
+export type AoDecifrar = (decifrados: Decifrado[]) => Promise<void>;
+
 function ehRegistro(valor: unknown): valor is Registro {
   return typeof valor === "object" && valor !== null && !Array.isArray(valor);
 }
@@ -44,7 +54,11 @@ function ehRegistro(valor: unknown): valor is Registro {
  * SQL cru (`$queryRaw`) também passa por fora; é o que os testes usam para
  * provar que a coluna está ilegível.
  */
-export function criptografiaDeColuna(campos: CamposCriptografados, chave: Buffer) {
+export function criptografiaDeColuna(
+  campos: CamposCriptografados,
+  chave: Buffer,
+  aoDecifrar?: AoDecifrar,
+) {
   const cifrados = (modelo: string) =>
     campos[modelo as Prisma.ModelName] ?? [];
 
@@ -87,20 +101,23 @@ export function criptografiaDeColuna(campos: CamposCriptografados, chave: Buffer
     }
   }
 
-  function decifrarResultado(modelo: string, valor: unknown): void {
+  function decifrarResultado(modelo: string, valor: unknown, decifrados: Decifrado[]): void {
     if (Array.isArray(valor)) {
-      valor.forEach((item) => decifrarResultado(modelo, item));
+      valor.forEach((item) => decifrarResultado(modelo, item, decifrados));
       return;
     }
     if (!ehRegistro(valor)) return;
 
+    let decifrou = false;
     for (const campo of cifrados(modelo)) {
       if (typeof valor[campo] === "string") {
         valor[campo] = decifrar(valor[campo], chave, `${modelo}.${campo}`);
+        decifrou = true;
       }
     }
+    if (decifrou) decifrados.push({ modelo: modelo as Prisma.ModelName, registro: valor });
     for (const [campo, destino] of RELACOES.get(modelo) ?? []) {
-      if (campo in valor) decifrarResultado(destino, valor[campo]);
+      if (campo in valor) decifrarResultado(destino, valor[campo], decifrados);
     }
   }
 
@@ -128,7 +145,9 @@ export function criptografiaDeColuna(campos: CamposCriptografados, chave: Buffer
           }
 
           const resultado = await query(entrada);
-          decifrarResultado(model, resultado);
+          const decifrados: Decifrado[] = [];
+          decifrarResultado(model, resultado, decifrados);
+          if (decifrados.length && aoDecifrar) await aoDecifrar(decifrados);
           return resultado;
         },
       },

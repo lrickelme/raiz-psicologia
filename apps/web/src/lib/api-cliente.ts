@@ -14,13 +14,23 @@ export class ErroApi extends Error {
 
 const FALHA_DE_REDE = "Não foi possível falar com o servidor. Tente de novo.";
 
+type OpcoesChamada = Omit<RequestInit, "body"> & {
+  corpo?: unknown;
+  /**
+   * `false` devolve o 401 como `ErroApi` em vez de ir ao login. Só para o
+   * editor do prontuário, que precisa continuar montado para não perder o
+   * texto ainda não salvo (design.md, "401 no editor").
+   */
+  redirecionarEm401?: boolean;
+};
+
 /**
  * Chamada à API pelo BFF, a partir do navegador. Sessão vencida leva ao login
  * com navegação completa, para não sobrar estado em memória.
  */
 export async function chamarApi<T>(
   caminho: string,
-  { corpo, ...init }: Omit<RequestInit, "body"> & { corpo?: unknown } = {},
+  { corpo, redirecionarEm401 = true, ...init }: OpcoesChamada = {},
 ): Promise<T> {
   let resposta: Response;
   try {
@@ -33,7 +43,7 @@ export async function chamarApi<T>(
     throw new ErroApi(0, FALHA_DE_REDE);
   }
 
-  if (resposta.status === 401) {
+  if (resposta.status === 401 && redirecionarEm401) {
     const de = `${window.location.pathname}${window.location.search}`;
     window.location.replace(`/login?de=${encodeURIComponent(de)}`);
   }

@@ -22,6 +22,9 @@ Incluído:
 - Exportação do prontuário completo do paciente em PDF.
 - Rotina de backup do banco, criptografada e testada por restauração.
 - Data de elegibilidade para descarte exibida no perfil do paciente.
+- Telefone normalizado: gravado só com dígitos, máscara progressiva na
+  digitação e busca independente de formato. Entra aqui por ser ajuste pequeno
+  no cadastro de paciente, que esta change já modifica.
 
 Excluído:
 
@@ -56,5 +59,8 @@ a parte que mais se beneficia de ver o modelo funcionando.
 - **PDF como cópia não rastreada.** Exportar é requisito legítimo, mas gera um
   arquivo fora do controle do sistema. A exportação é auditada e o PDF traz
   marcação de origem e data.
+- **Telefone legado com formato inesperado.** O telefone era gravado como
+  digitado. A migração normaliza para dígitos sem descartar nada: o que não
+  fechar 10 ou 11 dígitos é mantido e corrigido na próxima edição do cadastro.
 - **Backup não testado.** Backup que nunca foi restaurado não é backup. A tarefa
   de restauração é obrigatória, não opcional.

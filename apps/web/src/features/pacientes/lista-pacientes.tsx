@@ -1,4 +1,4 @@
-import type { Paciente } from "@raiz/shared";
+import { formatarTelefone, type Paciente } from "@raiz/shared";
 import Link from "next/link";
 import { Avatar } from "@/components/ui/avatar";
 import { formatarDinheiro } from "@/lib/formatar";
@@ -36,7 +36,7 @@ export function ListaPacientes({ pacientes }: { pacientes: Paciente[] }) {
               )}
             </span>
             <span className="truncate text-raiz-corpo-sm text-raiz-texto-secundario">
-              {paciente.telefone ?? "—"}
+              {formatarTelefone(paciente.telefone) ?? "—"}
             </span>
             <span className="text-right font-raiz-mono text-[12.5px] text-raiz-texto-terciario">
               {formatarDinheiro(paciente.valorConsultaPadrao)}

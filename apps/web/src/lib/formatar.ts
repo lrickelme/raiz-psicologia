@@ -1,3 +1,5 @@
+import { dataLocal } from "@raiz/shared";
+
 const MESES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
 
 /** "225.50" → "R$ 225,50". Opera na string: dinheiro nunca passa por `number`. */
@@ -7,9 +9,13 @@ export function formatarDinheiro(valor: string): string {
   return `R$ ${comMilhar},${centavos.padEnd(2, "0")}`;
 }
 
-/** "2025-03-12" (ou ISO completo) → "12 mar 2025", sem passar pelo fuso. */
+/**
+ * "2025-03-12" → "12 mar 2025". Data de calendário não passa por fuso; um
+ * instante ISO completo vira a data de São Paulo — cortar a string pegaria o
+ * dia em UTC, que às 21h locais já é o seguinte.
+ */
 export function formatarData(iso: string): string {
-  const [ano, mes, dia] = iso.slice(0, 10).split("-");
+  const [ano, mes, dia] = (iso.length > 10 ? dataLocal(iso) : iso).split("-");
   return `${Number(dia)} ${MESES[Number(mes) - 1]} ${ano}`;
 }
 

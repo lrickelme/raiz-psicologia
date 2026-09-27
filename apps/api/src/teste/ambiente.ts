@@ -7,7 +7,7 @@ import { COOKIE_SESSAO } from "../auth/auth.constantes";
 import { gerarHashSenha } from "../auth/senha";
 import { PrismaService } from "../prisma/prisma.service";
 
-type Metodo = "GET" | "POST" | "PATCH" | "DELETE";
+type Metodo = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
 /**
  * Postgres real (Testcontainers) com as migrations aplicadas, a aplicação
@@ -28,12 +28,15 @@ export async function subirAmbiente() {
   await prisma.usuario.create({
     data: { email, nome: "Profissional", senhaHash: await gerarHashSenha(senha) },
   });
-  const entrada = await app.inject({
-    method: "POST",
-    url: "/api/v1/auth/login",
-    payload: { email, senha },
-  });
-  const token = entrada.cookies.find((c) => c.name === COOKIE_SESSAO)!.value;
+  async function entrar(): Promise<string> {
+    const entrada = await app.inject({
+      method: "POST",
+      url: "/api/v1/auth/login",
+      payload: { email, senha },
+    });
+    return entrada.cookies.find((c) => c.name === COOKIE_SESSAO)!.value;
+  }
+  let token = await entrar();
 
   return {
     app,
@@ -46,6 +49,10 @@ export async function subirAmbiente() {
         cookies: { [COOKIE_SESSAO]: token },
         payload,
       }),
+    /** Nova sessão, como depois de reautenticar; `api` passa a usá-la. */
+    reautenticar: async () => {
+      token = await entrar();
+    },
     encerrar: async () => {
       await app.close();
       await banco.stop();

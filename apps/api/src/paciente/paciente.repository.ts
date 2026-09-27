@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { Prisma, type Paciente } from "@prisma/client";
-import type { ListagemPacientes } from "@raiz/shared";
+import { soDigitos, type ListagemPacientes } from "@raiz/shared";
 import { PrismaService } from "../prisma/prisma.service";
 
 @Injectable()
@@ -22,7 +22,11 @@ export class PacienteRepository {
       condicoes.push(Prisma.sql`status = ${status}::"StatusPaciente"`);
     }
     if (busca) {
-      const digitos = busca.replace(/\D/g, "");
+      // Termo e dado comparados só pelos dígitos (spec pacientes, "Telefone
+      // normalizado"): "(83) 99322" e "8399322" acham o mesmo paciente. O dado
+      // já é gravado em dígitos; `raiz_digitos` continua na expressão porque é
+      // ela que o índice de trigramas cobre.
+      const digitos = soDigitos(busca);
       condicoes.push(
         digitos
           ? Prisma.sql`(raiz_normalizar(nome) LIKE '%' || raiz_normalizar(${busca}) || '%'

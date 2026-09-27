@@ -174,8 +174,11 @@ async function main() {
     return;
   }
   if (recriar) {
-    // Auditoria fica: é somente-inserção e não tem chave estrangeira.
-    await prisma.$executeRawUnsafe("TRUNCATE atendimento, paciente");
+    // Auditoria fica: é somente-inserção e não tem chave estrangeira. As
+    // tabelas do prontuário entram porque referenciam paciente e atendimento.
+    await prisma.$executeRawUnsafe(
+      "TRUNCATE rascunho_evolucao, evolucao, atendimento, paciente",
+    );
   }
 
   const ana = await criarPaciente({

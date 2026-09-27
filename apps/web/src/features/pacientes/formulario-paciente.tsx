@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  formatarTelefone,
   normalizarNome,
   pacienteEntradaSchema,
   type Pagina,
@@ -12,11 +13,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import type { z } from "zod";
 import { AreaTexto } from "@/components/ui/area-texto";
 import { Botao } from "@/components/ui/botao";
 import { Campo } from "@/components/ui/campo";
+import { CampoTelefone } from "@/components/ui/campo-telefone";
 import { Modal } from "@/components/ui/modal";
 import { chamarApi, ErroApi } from "@/lib/api-cliente";
 import { formatarData } from "@/lib/formatar";
@@ -57,6 +59,7 @@ export function FormularioPaciente({ paciente }: { paciente?: Paciente }) {
 
   const {
     register,
+    control,
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
@@ -124,12 +127,21 @@ export function FormularioPaciente({ paciente }: { paciente?: Paciente }) {
             erro={errors.valorConsultaPadrao?.message}
             {...register("valorConsultaPadrao")}
           />
-          <Campo
-            rotulo="Telefone"
-            type="tel"
-            placeholder="(83) 99999-0000"
-            erro={errors.telefone?.message}
-            {...register("telefone")}
+          <Controller
+            control={control}
+            name="telefone"
+            render={({ field }) => (
+              <CampoTelefone
+                rotulo="Telefone"
+                placeholder="(83) 99999-0000"
+                erro={errors.telefone?.message}
+                name={field.name}
+                ref={field.ref}
+                value={typeof field.value === "string" ? field.value : ""}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+              />
+            )}
           />
           <Campo rotulo="E-mail" type="email" erro={errors.email?.message} {...register("email")} />
           <Campo
@@ -200,7 +212,7 @@ export function FormularioPaciente({ paciente }: { paciente?: Paciente }) {
                 <span className="font-semibold text-raiz-marrom">{p.nome}</span>
                 <span className="block text-raiz-legenda text-raiz-texto-terciario">
                   {[
-                    p.telefone,
+                    formatarTelefone(p.telefone),
                     p.status === "ARQUIVADO" && "arquivado",
                     `cadastro ${formatarData(p.criadoEm)}`,
                   ]

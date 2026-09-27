@@ -72,6 +72,8 @@ model Paciente {
   criadoEm            DateTime       @default(now()) @map("criado_em") @db.Timestamptz
   atualizadoEm        DateTime       @updatedAt @map("atualizado_em") @db.Timestamptz
   atendimentos        Atendimento[]
+  evolucoes           Evolucao[]
+  rascunhos           RascunhoEvolucao[]
 
   @@index([status])
   @@map("paciente")
@@ -105,10 +107,57 @@ model Atendimento {
   remarcadoDeId String?           @unique @map("remarcado_de_id") @db.Uuid
   remarcadoDe   Atendimento?      @relation("Remarcacao", fields: [remarcadoDeId], references: [id], onDelete: Restrict)
   remarcadoPara Atendimento?      @relation("Remarcacao")
+  evolucoes     Evolucao[]
+  rascunhos     RascunhoEvolucao[]
   criadoEm      DateTime          @default(now()) @map("criado_em") @db.Timestamptz
   atualizadoEm  DateTime          @updatedAt @map("atualizado_em") @db.Timestamptz
 
   @@index([inicio])
   @@index([pacienteId, inicio])
   @@map("atendimento")
+}
+
+/// Registro clínico (spec prontuario). Nunca editado nem excluído: retificar
+/// encerra esta versão (`vigente = false`) e cria outra apontando para ela,
+/// como na remarcação de atendimento. Um gatilho na migration `evolucao`
+/// recusa DELETE e qualquer UPDATE além de encerrar a versão vigente.
+model Evolucao {
+  id            String       @id @default(uuid(7)) @db.Uuid
+  pacienteId    String       @map("paciente_id") @db.Uuid
+  paciente      Paciente     @relation(fields: [pacienteId], references: [id], onDelete: Restrict)
+  atendimentoId String?      @map("atendimento_id") @db.Uuid
+  atendimento   Atendimento? @relation(fields: [atendimentoId], references: [id], onDelete: Restrict)
+  /// Dado clínico, cifrado pela extensão `comum/criptografia`.
+  texto         String
+  /// Hora do servidor na gravação; nenhum DTO aceita este campo.
+  registradoEm  DateTime     @default(now()) @map("registrado_em") @db.Timestamptz
+  /// Único: uma versão é retificada no máximo uma vez.
+  retificaDeId  String?      @unique @map("retifica_de_id") @db.Uuid
+  retificaDe    Evolucao?    @relation("Retificacao", fields: [retificaDeId], references: [id], onDelete: Restrict)
+  retificadaPor Evolucao?    @relation("Retificacao")
+  vigente       Boolean      @default(true)
+  criadoEm      DateTime     @default(now()) @map("criado_em") @db.Timestamptz
+
+  @@index([pacienteId, registradoEm])
+  @@index([atendimentoId])
+  @@map("evolucao")
+}
+
+/// Texto em edição, salvo no servidor para não se perder (spec prontuario,
+/// "Rascunho sem perda"). Não é registro clínico: não entra no PDF nem na
+/// guarda, e é apagado quando a evolução correspondente é gravada. A
+/// unicidade trata `atendimentoId` nulo como valor (`NULLS NOT DISTINCT`, na
+/// migration), para que o rascunho avulso também seja um só por paciente.
+model RascunhoEvolucao {
+  id            String       @id @default(uuid(7)) @db.Uuid
+  pacienteId    String       @map("paciente_id") @db.Uuid
+  paciente      Paciente     @relation(fields: [pacienteId], references: [id], onDelete: Restrict)
+  atendimentoId String?      @map("atendimento_id") @db.Uuid
+  atendimento   Atendimento? @relation(fields: [atendimentoId], references: [id], onDelete: Restrict)
+  /// Cifrado como a evolução: texto clínico, ainda que provisório.
+  texto         String
+  atualizadoEm  DateTime     @updatedAt @map("atualizado_em") @db.Timestamptz
+
+  @@unique([pacienteId, atendimentoId])
+  @@map("rascunho_evolucao")
 }

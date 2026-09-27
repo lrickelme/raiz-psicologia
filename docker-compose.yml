@@ -16,6 +16,27 @@ services:
       timeout: 5s
       retries: 10
 
+  # Backup agendado, cifrado com a chave pública age (ver README, Backup).
+  # Fica fora do `pnpm dev`: sobe com `docker compose --profile backup up -d`.
+  backup:
+    build: ./infra/backup
+    profiles: [backup]
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGHOST: db
+      PGPORT: 5432
+      PGUSER: raiz
+      PGPASSWORD: raiz
+      PGDATABASE: raiz
+      BACKUP_AGE_RECIPIENT: ${BACKUP_AGE_RECIPIENT:-}
+      BACKUP_CRON: ${BACKUP_CRON:-0 3 * * *}
+      BACKUP_RETENCAO_DIAS: ${BACKUP_RETENCAO_DIAS:-30}
+    volumes:
+      - ${BACKUP_DIR:-./backups}:/backups
+
 volumes:
   raiz_pgdata:
     name: raiz_pgdata

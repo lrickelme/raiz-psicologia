@@ -26,3 +26,30 @@ function inteiroDoAmbiente(nome: string, padrao: number): number {
  * rodar em máquina mais lenta, meça de novo e suba este valor.
  */
 export const LOGIN_PISO_MS = inteiroDoAmbiente("RAIZ_LOGIN_PISO_MS", 600);
+
+export const GUARDA_PRONTUARIO_ANOS_PADRAO = 20;
+export const GUARDA_PRONTUARIO_ANOS_MINIMO = 5;
+
+/**
+ * Prazo de guarda do prontuário, em anos (spec prontuario, "Prazo de guarda
+ * configurável"). O enquadramento entre 5 e 20 anos é decisão da
+ * profissional (Resolução CFP nº 001/2009, Lei nº 13.787/2018); abaixo de 5
+ * o sistema calcularia uma data que não se sustenta perante o conselho, então
+ * a API se recusa a subir em vez de exibi-la.
+ */
+export function carregarGuardaProntuarioAnos(ambiente: NodeJS.ProcessEnv = process.env): number {
+  const bruto = ambiente.GUARDA_PRONTUARIO_ANOS;
+  if (bruto === undefined || bruto.trim() === "") return GUARDA_PRONTUARIO_ANOS_PADRAO;
+
+  const valor = Number(bruto);
+  if (!Number.isInteger(valor) || valor < GUARDA_PRONTUARIO_ANOS_MINIMO) {
+    throw new Error(
+      `GUARDA_PRONTUARIO_ANOS deve ser um inteiro de no mínimo ${GUARDA_PRONTUARIO_ANOS_MINIMO} ` +
+        `(recebido: "${bruto}")`,
+    );
+  }
+  return valor;
+}
+
+/** Avaliado na importação, como o piso do login: valor inválido aborta o boot. */
+export const GUARDA_PRONTUARIO_ANOS = carregarGuardaProntuarioAnos();

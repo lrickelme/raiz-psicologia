@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { soDigitos, telefoneSchema } from "./telefone";
 
 /** Teto de itens por página na listagem (spec pacientes). */
 export const TAMANHO_MAXIMO_PAGINA = 50;
@@ -40,7 +41,11 @@ export const pacienteEntradaSchema = z.object({
     .trim()
     .min(1, "Informe o nome")
     .max(200, "Nome longo demais"),
-  telefone: opcional(z.string().trim().max(30, "Telefone longo demais")),
+  // Sem nenhum dígito conta como vazio: `()` ou `-` não é telefone inválido, é ausente.
+  telefone: z.preprocess(
+    (valor) => (typeof valor === "string" && soDigitos(valor) === "" ? null : valor),
+    telefoneSchema.nullable().optional(),
+  ),
   email: opcional(z.string().trim().toLowerCase().email("E-mail inválido")),
   nascimento: opcional(
     dataIsoSchema.refine(

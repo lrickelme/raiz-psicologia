@@ -1,4 +1,5 @@
 import { dataLocal, type Atendimento } from "@raiz/shared";
+import Link from "next/link";
 import { BadgeStatus } from "@/components/ui/badge-status";
 import { duracaoMin, faixaHoraria } from "@/features/agenda/horario";
 import { formatarData, formatarDinheiro } from "@/lib/formatar";
@@ -18,7 +19,14 @@ function quando(a: Atendimento): string {
  * vizinho da cadeia por âncora, então a sequência original → remarcações →
  * vigente é legível e navegável sem omitir nenhum elo.
  */
-export function HistoricoAtendimentos({ atendimentos }: { atendimentos: Atendimento[] }) {
+export function HistoricoAtendimentos({
+  atendimentos,
+  evolucaoHref,
+}: {
+  atendimentos: Atendimento[];
+  /** Link para registrar evolução de um atendimento realizado; ausente para arquivado. */
+  evolucaoHref?: (atendimentoId: string) => string;
+}) {
   const porId = new Map(atendimentos.map((a) => [a.id, a]));
   const ordenados = [...atendimentos].sort((a, b) => b.inicio.localeCompare(a.inicio));
 
@@ -80,6 +88,15 @@ export function HistoricoAtendimentos({ atendimentos }: { atendimentos: Atendime
                     </a>
                   )}
                 </div>
+              )}
+
+              {evolucaoHref && a.status === "REALIZADO" && (
+                <Link
+                  href={evolucaoHref(a.id)}
+                  className="self-start text-raiz-corpo-sm font-semibold text-raiz-vinho hover:underline"
+                >
+                  Registrar evolução
+                </Link>
               )}
             </article>
           </li>
