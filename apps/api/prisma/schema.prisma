@@ -61,16 +61,16 @@ enum StatusPaciente {
 /// e telefone usa índices de expressão (`unaccent` + `pg_trgm`) criados na
 /// migration, que o Prisma não modela — ver `paciente.repository.ts`.
 model Paciente {
-  id                  String         @id @default(uuid(7)) @db.Uuid
+  id                  String             @id @default(uuid(7)) @db.Uuid
   nome                String
   telefone            String?
   email               String?
-  nascimento          DateTime?      @db.Date
-  valorConsultaPadrao Decimal        @map("valor_consulta_padrao") @db.Decimal(10, 2)
+  nascimento          DateTime?          @db.Date
+  valorConsultaPadrao Decimal            @map("valor_consulta_padrao") @db.Decimal(10, 2)
   observacoes         String?
-  status              StatusPaciente @default(ATIVO)
-  criadoEm            DateTime       @default(now()) @map("criado_em") @db.Timestamptz
-  atualizadoEm        DateTime       @updatedAt @map("atualizado_em") @db.Timestamptz
+  status              StatusPaciente     @default(ATIVO)
+  criadoEm            DateTime           @default(now()) @map("criado_em") @db.Timestamptz
+  atualizadoEm        DateTime           @updatedAt @map("atualizado_em") @db.Timestamptz
   atendimentos        Atendimento[]
   evolucoes           Evolucao[]
   rascunhos           RascunhoEvolucao[]
@@ -93,24 +93,34 @@ enum StatusAtendimento {
 /// sobreposição, duração, motivo obrigatório nos encerramentos — estão na
 /// migration `atendimento`.
 model Atendimento {
-  id            String            @id @default(uuid(7)) @db.Uuid
-  pacienteId    String            @map("paciente_id") @db.Uuid
-  paciente      Paciente          @relation(fields: [pacienteId], references: [id], onDelete: Restrict)
-  inicio        DateTime          @db.Timestamptz
-  fim           DateTime          @db.Timestamptz
-  status        StatusAtendimento @default(AGENDADO)
+  id                 String             @id @default(uuid(7)) @db.Uuid
+  pacienteId         String             @map("paciente_id") @db.Uuid
+  paciente           Paciente           @relation(fields: [pacienteId], references: [id], onDelete: Restrict)
+  inicio             DateTime           @db.Timestamptz
+  fim                DateTime           @db.Timestamptz
+  status             StatusAtendimento  @default(AGENDADO)
   /// Congelado no agendamento: reajuste do paciente não retroage (spec pacientes).
-  valor         Decimal           @db.Decimal(10, 2)
+  valor              Decimal            @db.Decimal(10, 2)
   /// Dado clínico, cifrado pela extensão `comum/criptografia`.
-  motivo        String?
+  motivo             String?
   /// Único: um atendimento é substituído no máximo uma vez.
-  remarcadoDeId String?           @unique @map("remarcado_de_id") @db.Uuid
-  remarcadoDe   Atendimento?      @relation("Remarcacao", fields: [remarcadoDeId], references: [id], onDelete: Restrict)
-  remarcadoPara Atendimento?      @relation("Remarcacao")
-  evolucoes     Evolucao[]
-  rascunhos     RascunhoEvolucao[]
-  criadoEm      DateTime          @default(now()) @map("criado_em") @db.Timestamptz
-  atualizadoEm  DateTime          @updatedAt @map("atualizado_em") @db.Timestamptz
+  remarcadoDeId      String?            @unique @map("remarcado_de_id") @db.Uuid
+  remarcadoDe        Atendimento?       @relation("Remarcacao", fields: [remarcadoDeId], references: [id], onDelete: Restrict)
+  remarcadoPara      Atendimento?       @relation("Remarcacao")
+  /// Instante da transição para CANCELADO, REMARCADO, FALTA ou REALIZADO,
+  /// gravado no mesmo UPDATE que muda o status. Nulo enquanto AGENDADO.
+  encerradoEm        DateTime?          @map("encerrado_em") @db.Timestamptz
+  /// Congelado no encerramento por `comum/cobranca` (spec agenda,
+  /// "Cobrabilidade congelada no encerramento"). Nulo enquanto AGENDADO — e,
+  /// para cancelamento antigo sem registro na trilha, até decisão da profissional.
+  cobravel           Boolean?
+  cobrancaDispensada Boolean            @default(false) @map("cobranca_dispensada")
+  /// Dado clínico ou pessoal, cifrado pela extensão `comum/criptografia`.
+  motivoDispensa     String?            @map("motivo_dispensa")
+  evolucoes          Evolucao[]
+  rascunhos          RascunhoEvolucao[]
+  criadoEm           DateTime           @default(now()) @map("criado_em") @db.Timestamptz
+  atualizadoEm       DateTime           @updatedAt @map("atualizado_em") @db.Timestamptz
 
   @@index([inicio])
   @@index([pacienteId, inicio])

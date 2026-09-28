@@ -13,6 +13,7 @@ import type {
   Remarcacao,
   StatusAtendimento,
 } from "@raiz/shared";
+import { encerramento } from "../comum/cobranca/cobranca";
 import { dinheiroDaApi, dinheiroParaApi } from "../comum/dinheiro";
 import { PrismaService } from "../prisma/prisma.service";
 import {
@@ -36,6 +37,9 @@ export function paraApi(
     ...(comMotivo && { motivo: atendimento.motivo }),
     remarcadoDeId: atendimento.remarcadoDeId,
     remarcadoParaId: atendimento.remarcadoPara?.id ?? null,
+    cobravel: atendimento.cobravel,
+    cobrancaDispensada: atendimento.cobrancaDispensada,
+    ...(comMotivo && { motivoDispensa: atendimento.motivoDispensa }),
   };
 }
 
@@ -63,6 +67,18 @@ function jaEncerrado(status: StatusAtendimento): ConflictException {
   });
 }
 
+function naoDispensavel(atendimento: AtendimentoComRelacoes): ConflictException {
+  const message =
+    atendimento.cobravel === null
+      ? atendimento.status === "AGENDADO"
+        ? "O atendimento ainda está agendado; a cobrança só é decidida no encerramento"
+        : "A cobrabilidade deste atendimento ainda não foi decidida"
+      : atendimento.cobravel
+        ? "A cobrança deste atendimento já foi dispensada"
+        : "O atendimento não é cobrável; não há cobrança a dispensar";
+  return new ConflictException({ error: "Cobrança não dispensável", message });
+}
+
 @Injectable()
 export class AtendimentoService {
   constructor(
@@ -74,6 +90,10 @@ export class AtendimentoService {
   async listar(consulta: ConsultaAtendimentos): Promise<Atendimento[]> {
     const atendimentos = await this.repositorio.listar(consulta);
     return atendimentos.map((a) => paraApi(a, { comMotivo: Boolean(consulta.pacienteId) }));
+  }
+
+  async obter(id: string): Promise<Atendimento> {
+    return paraApi(await this.existente(id), { comMotivo: true });
   }
 
   async criar({ pacienteId, inicio, fim, valor }: AtendimentoDados): Promise<Atendimento> {
@@ -109,12 +129,12 @@ export class AtendimentoService {
         message: "Só é possível marcar como realizado depois do horário de término",
       });
     }
-    return this.transicionar(id, { status: "REALIZADO" });
+    return this.transicionar(id, encerramento(atendimento.inicio, "REALIZADO"));
   }
 
   async cancelar(id: string, motivo: string): Promise<Atendimento> {
-    await this.agendado(id);
-    return this.transicionar(id, { status: "CANCELADO", motivo });
+    const atendimento = await this.agendado(id);
+    return this.transicionar(id, { ...encerramento(atendimento.inicio, "CANCELADO"), motivo });
   }
 
   async falta(id: string, motivo: string): Promise<Atendimento> {
@@ -125,7 +145,7 @@ export class AtendimentoService {
         message: "Só é possível registrar falta depois do horário de início",
       });
     }
-    return this.transicionar(id, { status: "FALTA", motivo });
+    return this.transicionar(id, { ...encerramento(atendimento.inicio, "FALTA"), motivo });
   }
 
   /**
@@ -146,7 +166,7 @@ export class AtendimentoService {
       const novo = await this.prisma.$transaction(async (tx) => {
         const { count } = await tx.atendimento.updateMany({
           where: { id, status: "AGENDADO" },
-          data: { status: "REMARCADO", motivo },
+          data: { ...encerramento(original.inicio, "REMARCADO"), motivo },
         });
         // Outra requisição encerrou o original entre a leitura e aqui.
         if (!count) throw jaEncerrado((await this.existente(id)).status);
@@ -170,8 +190,44 @@ export class AtendimentoService {
   }
 
   /**
+   * Tira da receita um atendimento cobrável, sem apagar a cobrabilidade
+   * (design.md, "Dispensa não apaga a cobrabilidade"). A condição no UPDATE
+   * recusa o que não é cobrável, ainda não decidido ou já dispensado.
+   */
+  async dispensarCobranca(id: string, motivo: string): Promise<Atendimento> {
+    const { count } = await this.prisma.atendimento.updateMany({
+      where: { id, cobravel: true, cobrancaDispensada: false },
+      data: { cobrancaDispensada: true, motivoDispensa: motivo },
+    });
+    const atual = await this.existente(id);
+    if (!count) throw naoDispensavel(atual);
+    return paraApi(atual, { comMotivo: true });
+  }
+
+  /**
+   * Devolve à receita. O motivo fica na coluna como o da última dispensa:
+   * apagá-lo seria edição destrutiva. Dispensa e reversão ficam na trilha,
+   * sem o texto — `detalhe` não é cifrado.
+   */
+  async reverterDispensa(id: string): Promise<Atendimento> {
+    const { count } = await this.prisma.atendimento.updateMany({
+      where: { id, cobrancaDispensada: true },
+      data: { cobrancaDispensada: false },
+    });
+    const atual = await this.existente(id);
+    if (!count) {
+      throw new ConflictException({
+        error: "Cobrança não dispensada",
+        message: "Não há dispensa de cobrança a reverter neste atendimento",
+      });
+    }
+    return paraApi(atual, { comMotivo: true });
+  }
+
+  /**
    * Muda o status só se ele ainda for AGENDADO: a condição no UPDATE fecha a
-   * corrida entre duas transições simultâneas do mesmo atendimento.
+   * corrida entre duas transições simultâneas do mesmo atendimento. O
+   * instante do encerramento e a cobrabilidade vão no mesmo UPDATE.
    */
   private async transicionar(
     id: string,

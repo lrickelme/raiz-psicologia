@@ -90,7 +90,7 @@ export default async function PacientePage({ params }: PageProps<"/pacientes/[id
               rotulo="Nascimento"
               valor={paciente.nascimento && formatarData(paciente.nascimento)}
             />
-            <Dado rotulo="Valor/sessão" valor={formatarDinheiro(paciente.valorConsultaPadrao)} />
+            <Dado rotulo="Valor/atendimento" valor={formatarDinheiro(paciente.valorConsultaPadrao)} />
             <Dado rotulo="Cadastro" valor={formatarData(paciente.criadoEm)} />
           </dl>
 

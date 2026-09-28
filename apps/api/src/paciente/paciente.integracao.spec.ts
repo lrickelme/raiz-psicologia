@@ -11,6 +11,7 @@ import { criarApp } from "../app.factory";
 import { COOKIE_SESSAO } from "../auth/auth.constantes";
 import { gerarHashSenha } from "../auth/senha";
 import { PrismaService } from "../prisma/prisma.service";
+import { IMAGEM_POSTGRES } from "../teste/imagem-postgres";
 
 const EMAIL = "profissional@exemplo.com";
 const SENHA = "senha-correta-da-profissional";
@@ -22,7 +23,7 @@ describe("pacientes (integração)", () => {
   let token: string;
 
   beforeAll(async () => {
-    banco = await new PostgreSqlContainer("postgres:16-alpine").start();
+    banco = await new PostgreSqlContainer(IMAGEM_POSTGRES).start();
     process.env.DATABASE_URL = banco.getConnectionUri();
     execFileSync("npx", ["prisma", "migrate", "deploy"], {
       env: process.env,

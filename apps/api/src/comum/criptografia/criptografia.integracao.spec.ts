@@ -9,6 +9,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { PrismaService } from "../../prisma/prisma.service";
 import { carregarChave, cifrar, decifrar, VARIAVEL_CHAVE } from "./cifra";
 import { criptografiaDeColuna } from "./extensao";
+import { IMAGEM_POSTGRES } from "../../teste/imagem-postgres";
 
 const CHAVE = carregarChave();
 const TEXTO = "Paciente pediu para remarcar: internação da mãe";
@@ -29,7 +30,7 @@ describe("criptografia de coluna (integração)", () => {
   let prisma: ReturnType<typeof clienteCifrado>;
 
   beforeAll(async () => {
-    banco = await new PostgreSqlContainer("postgres:16-alpine").start();
+    banco = await new PostgreSqlContainer(IMAGEM_POSTGRES).start();
     execFileSync("npx", ["prisma", "migrate", "deploy"], {
       env: { ...process.env, DATABASE_URL: banco.getConnectionUri() },
       stdio: "ignore",

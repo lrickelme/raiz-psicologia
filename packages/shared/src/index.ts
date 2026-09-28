@@ -4,3 +4,4 @@ export * from "./calendario";
 export * from "./atendimento";
 export * from "./evolucao";
 export * from "./telefone";
+export * from "./financeiro";

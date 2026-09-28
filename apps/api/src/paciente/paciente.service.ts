@@ -11,6 +11,7 @@ import type {
 } from "@raiz/shared";
 import { AuditoriaService } from "../auditoria/auditoria.service";
 import { EventoAuditoria } from "../auditoria/eventos";
+import { encerramento } from "../comum/cobranca/cobranca";
 import { dinheiroDaApi, dinheiroParaApi } from "../comum/dinheiro";
 import { PrismaService } from "../prisma/prisma.service";
 import { PacienteRepository } from "./paciente.repository";
@@ -111,13 +112,19 @@ export class PacienteService {
         });
       }
 
-      const ids = pendentes.map((a) => a.id);
-      if (ids.length) {
+      // Um UPDATE por atendimento: a cobrabilidade depende do início de cada
+      // um — cancelar hoje uma consulta de hoje à noite é cobrável pela regra.
+      const agora = new Date();
+      for (const pendente of pendentes) {
         await tx.atendimento.updateMany({
-          where: { id: { in: ids }, status: "AGENDADO" },
-          data: { status: "CANCELADO", motivo: motivoCancelamento },
+          where: { id: pendente.id, status: "AGENDADO" },
+          data: {
+            ...encerramento(pendente.inicio, "CANCELADO", agora),
+            motivo: motivoCancelamento,
+          },
         });
       }
+      const ids = pendentes.map((a) => a.id);
       const arquivado = await tx.paciente.update({
         where: { id },
         data: { status: "ARQUIVADO" },

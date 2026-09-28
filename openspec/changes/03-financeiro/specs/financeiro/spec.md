@@ -42,7 +42,10 @@ vigente aplicada retroativamente.
 ### Requirement: Receita prevista do mês
 
 O sistema SHALL exibir, para o mês corrente, a receita prevista a partir do valor
-congelado dos atendimentos `AGENDADO` restantes.
+congelado dos atendimentos `AGENDADO` cujo horário ainda não terminou.
+Atendimentos `AGENDADO` com horário já terminado MUST NOT entrar na previsão:
+são pendências de encerramento (requisito "Atendimentos pendentes de
+encerramento").
 
 A previsão MUST ser apresentada separada da receita realizada, nunca somada a ela
 em um único número.
@@ -61,6 +64,13 @@ em um único número.
 - THEN sai da previsão
 - AND entra na receita realizada
 
+#### Scenario: Horário terminado sai da previsão
+
+- GIVEN um atendimento `AGENDADO` deste mês cujo horário de término já passou
+- WHEN o dashboard é aberto
+- THEN ele não conta na receita prevista
+- AND aparece entre os pendentes de encerramento
+
 #### Scenario: Previsão não é projeção
 
 - GIVEN o dashboard aberto
@@ -68,10 +78,47 @@ em um único número.
 - THEN ela cobre apenas o mês corrente
 - AND o sistema não apresenta estimativa para meses futuros
 
+### Requirement: Atendimentos pendentes de encerramento
+
+O sistema SHALL exibir, para o período selecionado, a quantidade e a soma do
+valor congelado dos atendimentos `AGENDADO` cujo horário já terminou, em
+qualquer mês do período.
+
+Esses atendimentos continuam compondo a expectativa de recebimento, mas MUST
+ser apresentados em indicador próprio, distinto da receita prevista e da
+realizada, nunca somados a elas em um único número: atendimento não encerrado é
+erro operacional, e a previsão o esconderia.
+
+#### Scenario: Pendência visível
+
+- GIVEN dois atendimentos `AGENDADO` a R$ 150 cujo horário terminou ontem, sem
+      encerramento
+- WHEN o dashboard é aberto
+- THEN o indicador de pendentes exibe 2 atendimentos somando R$ 300,00
+- AND a receita prevista não os inclui
+- AND a receita realizada não os inclui
+
+#### Scenario: Pendência de mês anterior
+
+- GIVEN um atendimento `AGENDADO` do mês passado, nunca encerrado
+- WHEN a profissional filtra o período do mês passado
+- THEN ele aparece entre os pendentes de encerramento
+- AND não há receita prevista para o período
+
+#### Scenario: Encerramento resolve a pendência
+
+- GIVEN um atendimento pendente de encerramento
+- WHEN a profissional o marca como realizado ou falta
+- THEN ele sai dos pendentes
+- AND entra na receita realizada
+
 ### Requirement: Comparativo entre meses
 
 O sistema SHALL exibir a receita realizada dos últimos doze meses, permitindo
-comparação entre eles.
+comparação entre eles. A série MUST NOT depender do filtro de período do
+dashboard: é o contexto contra o qual o período filtrado é lido. O painel MUST
+declarar que cobre os últimos doze meses e, com filtro ativo, que não segue o
+filtro.
 
 #### Scenario: Série mensal
 
@@ -79,6 +126,15 @@ comparação entre eles.
 - WHEN o comparativo é aberto
 - THEN os doze meses mais recentes são exibidos em ordem cronológica
 - AND meses sem receita aparecem com zero, não são omitidos da série
+
+#### Scenario: Filtro ativo
+
+- GIVEN o dashboard filtrado por um trimestre
+- WHEN o comparativo é exibido
+- THEN ele continua mostrando os doze meses até o corrente, sob o título
+      "Últimos 12 meses"
+- AND informa que mostra a série completa, sem seguir o filtro
+- AND os meses alcançados pelo período aparecem marcados por texto, não só por cor
 
 #### Scenario: Histórico curto
 
@@ -96,6 +152,10 @@ A visão MUST incluir a contagem de remarcações por paciente, ainda que remarc
 não gere receita: é o dado que permite perceber um padrão de remarcações
 sucessivas.
 
+A visão identifica pacientes pelo nome e MUST ser registrada na trilha de
+auditoria, como todo acesso a dado de paciente (spec auth, "Trilha de
+auditoria").
+
 #### Scenario: Composição por paciente
 
 - GIVEN um paciente com três `REALIZADO`, um `FALTA` e duas remarcações no período
@@ -110,6 +170,15 @@ sucessivas.
 - THEN ele consta da lista
 - AND é identificado como arquivado
 
+#### Scenario: Consulta registrada na trilha
+
+- GIVEN a receita por paciente de um período com atendimentos de dois pacientes
+- WHEN a profissional a consulta
+- THEN a trilha de auditoria registra a leitura com o identificador de cada
+      paciente listado
+- AND as consultas de receita do período e da série mensal, por não
+      identificarem paciente, não geram registro
+
 ### Requirement: Dashboard financeiro
 
 O sistema SHALL apresentar os números em dashboard com gráficos, usando
@@ -119,24 +188,38 @@ introduzido para colorir gráfico.
 O dashboard SHALL permitir filtrar por período. Cor MUST NOT ser o único
 portador de significado em nenhum gráfico.
 
+Valores que a profissional lê como quantia — cartões, tabelas, tooltip, rótulos
+do ranking — MUST aparecer em real brasileiro, com duas casas decimais e
+separador de milhar. Rótulos de escala de eixo não são quantia, são referência
+de magnitude para as linhas de grade, e MAY usar forma abreviada ("R$ 20 mil").
+
 #### Scenario: Filtro por período
 
 - GIVEN o dashboard com histórico de dois anos
 - WHEN a profissional filtra por um trimestre
-- THEN todos os números e gráficos refletem apenas o período
+- THEN todos os números e gráficos refletem apenas o período, exceto o
+      comparativo entre meses, que continua mostrando os doze meses até o corrente
 - AND a resposta ocorre em menos de dois segundos
 
 #### Scenario: Valores monetários
 
-- GIVEN qualquer número monetário exibido no dashboard
+- GIVEN um valor que a profissional lê como quantia no dashboard — cartão,
+      tabela, tooltip ou rótulo do ranking
 - WHEN ele é renderizado
 - THEN aparece em real brasileiro, com duas casas decimais e separador de milhar
+
+#### Scenario: Escala do gráfico mensal
+
+- GIVEN o gráfico mensal
+- WHEN o eixo é renderizado
+- THEN os rótulos de escala podem ser abreviados
+- AND o tooltip e a tabela de valores por mês exibem o valor exato com duas casas
 
 #### Scenario: Estado vazio
 
 - GIVEN um período filtrado sem nenhum atendimento
 - WHEN o dashboard é exibido
-- THEN cada painel indica ausência de dados
+- THEN cada painel que depende do período indica ausência de dados
 - AND nenhum gráfico é renderizado vazio
 
 ### Requirement: Cálculo agregado no banco

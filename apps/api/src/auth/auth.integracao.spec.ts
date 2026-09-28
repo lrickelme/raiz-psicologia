@@ -16,6 +16,7 @@ import {
   SESSAO_INATIVIDADE_MS,
 } from "./auth.constantes";
 import { gerarHashSenha } from "./senha";
+import { IMAGEM_POSTGRES } from "../teste/imagem-postgres";
 
 const EMAIL = "profissional@exemplo.com";
 const SENHA = "senha-correta-da-profissional";
@@ -27,7 +28,7 @@ describe("autenticação (integração)", () => {
   let prisma: PrismaService;
 
   beforeAll(async () => {
-    banco = await new PostgreSqlContainer("postgres:16-alpine").start();
+    banco = await new PostgreSqlContainer(IMAGEM_POSTGRES).start();
     process.env.DATABASE_URL = banco.getConnectionUri();
     execFileSync("npx", ["prisma", "migrate", "deploy"], {
       env: process.env,

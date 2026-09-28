@@ -10,6 +10,7 @@ import {
 import { CAMPOS_CRIPTOGRAFADOS } from "../src/comum/criptografia/campos";
 import { carregarChave } from "../src/comum/criptografia/cifra";
 import { criptografiaDeColuna } from "../src/comum/criptografia/extensao";
+import { cobravel } from "../src/comum/cobranca/cobranca";
 
 /**
  * Dados fictícios de desenvolvimento (tarefa 7.1). Nomes, telefones e motivos
@@ -67,6 +68,8 @@ async function agendar(
     status?: StatusAtendimento;
     motivo?: string;
     remarcadoDeId?: string;
+    /** Cancelamento avisado no próprio dia (cobrável) em vez de na véspera. */
+    avisadoNoDia?: boolean;
   } = {},
 ) {
   const { inicio, fim } = horario(data, hora, opcoes.minutos ?? 50);
@@ -79,12 +82,25 @@ async function agendar(
   if (!liberaHorario && !livre(inicio, fim)) return null;
   if (!liberaHorario) ocupados.push({ inicio, fim });
 
+  // Encerramento fictício, mas coerente com a regra de cobrança: realizado e
+  // falta encerram no fim do horário; cancelamento e remarcação, na véspera
+  // ou horas antes no próprio dia — nunca no futuro.
+  const antecedenciaMs = opcoes.avisadoNoDia ? 2 * 3600_000 : 26 * 3600_000;
+  const encerradoEm =
+    status === "AGENDADO"
+      ? null
+      : status === "REALIZADO" || status === "FALTA"
+        ? fim
+        : new Date(Math.min(inicio.getTime() - antecedenciaMs, agora.getTime()));
+
   return prisma.atendimento.create({
     data: {
       pacienteId: paciente.id,
       inicio,
       fim,
       status,
+      encerradoEm,
+      cobravel: status === "AGENDADO" ? null : cobravel(inicio, encerradoEm!, status),
       valor: opcoes.valor ?? paciente.valor,
       motivo: status === "AGENDADO" || status === "REALIZADO" ? null : opcoes.motivo,
       remarcadoDeId: opcoes.remarcadoDeId,
@@ -138,7 +154,13 @@ async function horarioSemanal(
       status = "CANCELADO";
       motivo = MOTIVOS_CANCELAMENTO[n % MOTIVOS_CANCELAMENTO.length];
     }
-    await agendar(paciente, data, hora, { minutos: opcoes.minutos, valor, status, motivo });
+    await agendar(paciente, data, hora, {
+      minutos: opcoes.minutos,
+      valor,
+      status,
+      motivo,
+      avisadoNoDia: n % 2 === 0,
+    });
   }
 }
 

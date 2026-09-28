@@ -1,19 +1,13 @@
-import { AreaConteudo } from "@/components/shell/area-conteudo";
-import { CabecalhoPagina } from "@/components/shell/cabecalho-pagina";
-import { Card } from "@/components/ui/card";
+import { hojeLocal } from "@raiz/shared";
+import type { Metadata } from "next";
+import { Financeiro } from "@/features/financeiro/financeiro";
+
+export const metadata: Metadata = { title: "Financeiro · Raíz" };
+
+// Receita por paciente traz nomes: nunca em cache estático (project.md).
+export const dynamic = "force-dynamic";
 
 export default function FinanceiroPage() {
-  return (
-    <>
-      <CabecalhoPagina titulo="Financeiro" descricao="Receita, sessões e projeções" />
-      <AreaConteudo>
-        <Card>
-          <p className="text-raiz-corpo text-raiz-texto-terciario">
-            Este módulo é construído na change 03 (financeiro), a partir dos
-            atendimentos realizados.
-          </p>
-        </Card>
-      </AreaConteudo>
-    </>
-  );
+  // "Hoje" do servidor, para o período padrão não divergir na hidratação.
+  return <Financeiro hoje={hojeLocal()} />;
 }

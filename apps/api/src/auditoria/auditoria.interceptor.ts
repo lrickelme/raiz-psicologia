@@ -7,7 +7,7 @@ import {
 import { Reflector } from "@nestjs/core";
 import type { FastifyRequest } from "fastify";
 import { mergeMap, type Observable } from "rxjs";
-import { RECURSO_AUDITADO } from "./auditado.decorator";
+import { IDS_AUDITADOS, RECURSO_AUDITADO, type ExtratorDeIds } from "./auditado.decorator";
 import { AuditoriaService } from "./auditoria.service";
 import { EventoAuditoria, type RecursoAuditado } from "./eventos";
 
@@ -52,6 +52,10 @@ export class AuditoriaInterceptor implements NestInterceptor {
       [contexto.getHandler(), contexto.getClass()],
     );
     if (!recursoTipo) return next.handle();
+    const extrairIds = this.reflector.getAllAndOverride<ExtratorDeIds>(IDS_AUDITADOS, [
+      contexto.getHandler(),
+      contexto.getClass(),
+    ]);
 
     const request = contexto
       .switchToHttp()
@@ -61,7 +65,7 @@ export class AuditoriaInterceptor implements NestInterceptor {
       mergeMap(async (corpo) => {
         const idDoCorpo = temId(corpo) ? corpo.id : undefined;
         const recursoId = request.params.id ?? idDoCorpo;
-        const ids = recursoId ? undefined : idsDaColecao(corpo);
+        const ids = recursoId ? undefined : (extrairIds ?? idsDaColecao)(corpo);
         // Operação sobre um recurso que cria outro (remarcar): os dois ids.
         const criadoId = idDoCorpo !== recursoId ? idDoCorpo : undefined;
 

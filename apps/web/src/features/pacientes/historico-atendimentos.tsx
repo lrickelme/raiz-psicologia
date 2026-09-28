@@ -1,6 +1,7 @@
 import { dataLocal, type Atendimento } from "@raiz/shared";
 import Link from "next/link";
 import { BadgeStatus } from "@/components/ui/badge-status";
+import { AcaoCobranca } from "@/features/cobranca/cobranca-atendimento";
 import { duracaoMin, faixaHoraria } from "@/features/agenda/horario";
 import { formatarData, formatarDinheiro } from "@/lib/formatar";
 
@@ -61,7 +62,12 @@ export function HistoricoAtendimentos({
                   {faixaHoraria(a.inicio, a.fim)} · {duracaoMin(a.inicio, a.fim)} min
                 </span>
                 <BadgeStatus status={a.status} />
-                <span className="ml-auto font-raiz-mono text-raiz-meta text-raiz-marrom">
+                <span
+                  className={`ml-auto font-raiz-mono text-raiz-meta ${
+                    a.cobrancaDispensada ? "text-raiz-texto-terciario line-through" : "text-raiz-marrom"
+                  }`}
+                >
+                  {a.cobrancaDispensada && <span className="sr-only">Cobrança dispensada: </span>}
                   {formatarDinheiro(a.valor)}
                 </span>
               </header>
@@ -73,6 +79,23 @@ export function HistoricoAtendimentos({
                   </span>
                   {a.motivo}
                 </p>
+              )}
+
+              {a.cobrancaDispensada ? (
+                <p className="rounded-raiz-campo bg-raiz-ambar-suave px-3 py-2 text-raiz-corpo leading-relaxed text-raiz-texto-secundario">
+                  <span className="text-raiz-meta font-semibold text-raiz-ambar-escuro">
+                    Cobrável, com cobrança dispensada:{" "}
+                  </span>
+                  {a.motivoDispensa}
+                </p>
+              ) : (
+                a.motivoDispensa && (
+                  // Revertida: o motivo fica como o da última dispensa (spec agenda).
+                  <p className="text-raiz-meta leading-relaxed text-raiz-texto-terciario">
+                    <span className="font-semibold">Dispensa de cobrança revertida · motivo registrado: </span>
+                    {a.motivoDispensa}
+                  </p>
+                )
               )}
 
               {(original || substituto) && (
@@ -89,6 +112,8 @@ export function HistoricoAtendimentos({
                   )}
                 </div>
               )}
+
+              <AcaoCobranca atendimento={a} />
 
               {evolucaoHref && a.status === "REALIZADO" && (
                 <Link

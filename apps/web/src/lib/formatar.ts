@@ -2,11 +2,15 @@ import { dataLocal } from "@raiz/shared";
 
 const MESES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
 
-/** "225.50" → "R$ 225,50". Opera na string: dinheiro nunca passa por `number`. */
+const REAL = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+
+/**
+ * "1225.50" → "R$ 1.225,50". A string decimal vai direto ao `Intl`, que a
+ * formata sem passar por `number` (ES2023): dinheiro nunca vira ponto
+ * flutuante, nem para exibir.
+ */
 export function formatarDinheiro(valor: string): string {
-  const [inteiro, centavos = ""] = valor.split(".");
-  const comMilhar = inteiro.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-  return `R$ ${comMilhar},${centavos.padEnd(2, "0")}`;
+  return REAL.format(valor as Intl.StringNumericLiteral);
 }
 
 /**

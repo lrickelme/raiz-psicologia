@@ -21,6 +21,20 @@ O congelamento existe pela mesma razão que o valor da consulta é congelado no
 agendamento: alterar a regra depois MUST NOT reescrever a receita de meses já
 apurados.
 
+O instante do encerramento MUST ser registrado no próprio atendimento, na mesma
+operação que muda o status, para que a cobrabilidade possa ser conferida sem
+depender de outra fonte. Atendimento `AGENDADO` MUST NOT ter instante de
+encerramento nem cobrabilidade definidos.
+
+Atendimentos encerrados antes deste requisito SHALL ter o instante do
+encerramento derivado da trilha de auditoria. Quando a trilha não tiver o
+registro e a regra depender da data, a cobrabilidade MUST permanecer indefinida,
+sem valor presumido.
+
+Atendimento encerrado sem cobrabilidade definida MUST NOT entrar na receita
+realizada. É estado que só ocorreria por defeito; nesse caso, apuração
+incompleta é preferível a apuração errada.
+
 #### Scenario: Cancelamento em dia anterior
 
 - GIVEN um atendimento marcado para segunda às 09h00
@@ -61,6 +75,12 @@ apurados.
 - THEN aquele atendimento continua não cobrável
 - AND a receita do mês em que ele ocorreu não muda
 
+#### Scenario: Encerrado sem cobrabilidade definida
+
+- GIVEN um atendimento encerrado cuja cobrabilidade não foi definida
+- WHEN a receita é calculada
+- THEN ele não entra no total
+
 #### Scenario: Atendimento ainda aberto
 
 - GIVEN um atendimento `AGENDADO`
@@ -78,6 +98,10 @@ A dispensa MUST NOT apagar a cobrabilidade original: o sistema registra que o
 atendimento era cobrável e que a cobrança foi dispensada, para que o total de um
 mês sempre tenha explicação.
 
+Reverter a dispensa MUST NOT apagar o motivo registrado: ele permanece, cifrado,
+como motivo da última dispensa. O texto do motivo MUST NOT ser gravado na trilha
+de auditoria, que não é cifrada.
+
 #### Scenario: Dispensar
 
 - GIVEN um cancelamento no dia da consulta, portanto cobrável
@@ -92,6 +116,18 @@ mês sempre tenha explicação.
 - THEN a API responde `422` apontando o campo
 - AND a cobrabilidade não muda
 
+#### Scenario: Ação alcançável do histórico e da agenda
+
+- GIVEN um atendimento cobrável
+- WHEN a profissional o abre no histórico do paciente ou no detalhe do
+      atendimento na agenda
+- THEN a ação de dispensar a cobrança está disponível nos dois lugares
+- AND antes de confirmar ela vê o valor congelado e por que o atendimento é
+      cobrável
+- AND num atendimento com cobrança dispensada, os dois lugares mostram o motivo
+      registrado e a opção de reverter
+- AND num atendimento não cobrável, a ação não é oferecida
+
 #### Scenario: Dispensar o que não é cobrável
 
 - GIVEN um atendimento já não cobrável
@@ -104,6 +140,14 @@ mês sempre tenha explicação.
 - WHEN a profissional reverte a dispensa
 - THEN o atendimento volta a entrar na receita realizada
 - AND tanto a dispensa quanto sua reversão constam da trilha de auditoria
+
+#### Scenario: Reverter preserva o motivo registrado
+
+- GIVEN uma cobrança dispensada com o motivo "paciente em luto"
+- WHEN a profissional reverte a dispensa
+- THEN o atendimento deixa de constar como dispensado
+- AND o motivo "paciente em luto" permanece registrado no atendimento
+- AND o texto do motivo não aparece na trilha de auditoria
 
 ## MODIFIED Requirements
 

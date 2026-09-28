@@ -7,7 +7,7 @@ export type CamposCriptografados = Partial<Record<Prisma.ModelName, readonly str
  * regulatórias).
  */
 export const CAMPOS_CRIPTOGRAFADOS: CamposCriptografados = {
-  Atendimento: ["motivo"],
+  Atendimento: ["motivo", "motivoDispensa"],
   Evolucao: ["texto"],
   RascunhoEvolucao: ["texto"],
 };

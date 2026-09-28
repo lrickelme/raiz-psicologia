@@ -14,13 +14,14 @@ import { BadgeStatus } from "@/components/ui/badge-status";
 import { Botao } from "@/components/ui/botao";
 import { Campo } from "@/components/ui/campo";
 import { Modal } from "@/components/ui/modal";
+import { CobrancaAtendimento, temCobranca, tituloCobranca } from "@/features/cobranca/cobranca-atendimento";
 import { ErroApi } from "@/lib/api-cliente";
 import { formatarData, formatarDinheiro } from "@/lib/formatar";
 import { conflitoLocal } from "./calendario";
 import { useTransicao } from "./consultas";
 import { duracaoMin, faixaHoraria, instanteIso, paraHora } from "./horario";
 
-type Modo = "detalhe" | "cancelar" | "falta" | "remarcar";
+type Modo = "detalhe" | "cancelar" | "falta" | "remarcar" | "cobranca";
 
 export type Selecao = {
   atendimento: Atendimento;
@@ -39,6 +40,7 @@ const TITULOS: Record<Modo, string> = {
   cancelar: "Cancelar atendimento",
   falta: "Registrar falta",
   remarcar: "Remarcar atendimento",
+  cobranca: "Dispensar cobrança",
 };
 
 export function ModalAtendimento({ selecao, onFechar, atendimentos }: Props) {
@@ -51,7 +53,11 @@ export function ModalAtendimento({ selecao, onFechar, atendimentos }: Props) {
   }
 
   return (
-    <Modal aberto={selecao !== null} titulo={TITULOS[modoAtual]} onFechar={fechar}>
+    <Modal
+      aberto={selecao !== null}
+      titulo={modoAtual === "cobranca" && selecao ? tituloCobranca(selecao.atendimento) : TITULOS[modoAtual]}
+      onFechar={fechar}
+    >
       {selecao && (
         <Conteudo
           key={`${selecao.atendimento.id}-${selecao.destino?.data}-${selecao.destino?.inicioMin}`}
@@ -176,12 +182,28 @@ function Conteudo({
             </Botao>
           </div>
         ) : (
-          <p className="text-raiz-corpo-sm text-raiz-texto-terciario">
-            Atendimento encerrado. O motivo, quando houver, aparece no histórico do paciente.
-          </p>
+          <>
+            <p className="text-raiz-corpo-sm text-raiz-texto-terciario">
+              Atendimento encerrado. O motivo, quando houver, aparece no histórico do paciente.
+              {atendimento.cobrancaDispensada && " Cobrança dispensada."}
+            </p>
+            {temCobranca(atendimento) && (
+              <div className="flex justify-end">
+                <Botao variante="secundario" onClick={() => setModo("cobranca")}>
+                  {atendimento.cobrancaDispensada ? "Ver dispensa de cobrança" : "Dispensar cobrança"}
+                </Botao>
+              </div>
+            )}
+          </>
         )}
         {erro && <p role="alert" className="font-semibold text-raiz-vinho">{erro}</p>}
       </div>
+    );
+  }
+
+  if (modo === "cobranca") {
+    return (
+      <CobrancaAtendimento atendimento={atendimento} onConcluir={onFechar} onVoltar={() => setModo("detalhe")} />
     );
   }
 

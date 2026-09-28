@@ -68,6 +68,10 @@ export const remarcacaoSchema = z.object({
 });
 export type Remarcacao = z.output<typeof remarcacaoSchema>;
 
+/** `POST /api/v1/atendimentos/:id/dispensar-cobranca` (spec agenda, "Dispensa de cobrança"). */
+export const dispensaSchema = z.object({ motivo: motivoSchema });
+export type Dispensa = z.output<typeof dispensaSchema>;
+
 /**
  * `GET /api/v1/atendimentos`. `de` e `ate` são datas de calendário de São
  * Paulo, inclusivas: quem resolve o fuso é a API, não o cliente.
@@ -113,6 +117,12 @@ export type Atendimento = {
   motivo?: string | null;
   remarcadoDeId: string | null;
   remarcadoParaId: string | null;
+  /** Congelada no encerramento; `null` enquanto `AGENDADO`. */
+  cobravel: boolean | null;
+  /** Cobrável, mas fora da receita por decisão da profissional. */
+  cobrancaDispensada: boolean;
+  /** Como `motivo`: dado pessoal, só no histórico e nas respostas que o gravam. */
+  motivoDispensa?: string | null;
 };
 
 /** Corpo do 409 de sobreposição. */

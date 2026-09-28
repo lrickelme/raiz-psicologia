@@ -113,14 +113,24 @@ JSX é erro de revisão.
 - Valores monetários em `Prisma.Decimal` e `numeric(10,2)` no Postgres. Nunca
   `number`. Na fronteira da API, serializar como string.
 - Migrations Prisma são imutáveis após commit. Correção é uma migration nova.
+- Requisito que descreve ação ou visão da profissional ("SHALL permitir",
+  "SHALL exibir", "SHALL oferecer", "SHALL apresentar" e afins) tem task de
+  interface própria em `tasks.md`, separada da task de endpoint. Endpoint sem
+  tela não cumpre o requisito, e tela sem task fica sem rastreabilidade: é
+  assim que a interface é conferida no fechamento de cada change.
 - Server Components para o shell e carregamento inicial. Módulos interativos
   (agenda, formulários) são Client Components com TanStack Query. Não force RSC
   em tela que o usuário manipula o tempo todo.
 - Desktop primeiro nas changes 01 a 05. A adaptação para celular e a instalação
   como PWA vêm na change 06. Sabendo disso, evite decisões que travem a adaptação:
-  sem largura fixa em pixel no shell, sem tabela como única forma de exibir lista,
-  sem ação essencial escondida atrás de `hover`. São restrições baratas agora e
-  caras de desfazer depois.
+  sem largura fixa em pixel no shell, sem ação essencial escondida atrás de
+  `hover`. São restrições baratas agora e caras de desfazer depois.
+- Lista cuja apresentação vai mudar na change 06 sai de um componente único, com
+  os dados separados da forma de exibir, para que trocar linhas por cards seja
+  mudança local. Marcação semântica vem primeiro: dado tabular — numérico,
+  comparado por coluna — usa `<table>` com `<th scope>`, porque leitor de tela
+  depende disso. A regra é sobre acoplar a lista a uma forma de exibição, não
+  sobre evitar `<table>`.
 
 ## Restrições regulatórias
 

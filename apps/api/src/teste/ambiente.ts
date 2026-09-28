@@ -3,6 +3,7 @@ import { execFileSync } from "node:child_process";
 import type { NestFastifyApplication } from "@nestjs/platform-fastify";
 import { PostgreSqlContainer } from "@testcontainers/postgresql";
 import { criarApp } from "../app.factory";
+import { IMAGEM_POSTGRES } from "./imagem-postgres";
 import { COOKIE_SESSAO } from "../auth/auth.constantes";
 import { gerarHashSenha } from "../auth/senha";
 import { PrismaService } from "../prisma/prisma.service";
@@ -14,7 +15,7 @@ type Metodo = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
  * montada como em produção e uma sessão já autenticada.
  */
 export async function subirAmbiente() {
-  const banco = await new PostgreSqlContainer("postgres:16-alpine").start();
+  const banco = await new PostgreSqlContainer(IMAGEM_POSTGRES).start();
   process.env.DATABASE_URL = banco.getConnectionUri();
   execFileSync("npx", ["prisma", "migrate", "deploy"], { env: process.env, stdio: "ignore" });
 

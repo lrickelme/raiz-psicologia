@@ -129,3 +129,23 @@ conhecido e aceito.
   minutos e protege a tela esquecida aberta no consultório, de validade absoluta
   do cookie, em torno de 7 dias. Esse é o item de maior retrabalho da change 06 —
   se em algum momento você quiser antecipar só uma coisa daqui, antecipe essa.
+
+**Candidato: degradação na decifragem** (achado na verificação da change 03,
+27/09/2026). Uma linha com coluna cifrada ilegível derruba a consulta inteira:
+`decifrar` lança, e `GET /atendimentos` de um mês inteiro responde 500 por causa
+de um único registro. Reproduzido com 434 atendimentos de motivo fora do formato
+`v1.…` no ambiente descartável. Três agravantes:
+
+- A grade da agenda cai junto, embora nunca exiba `motivo`: a extensão de
+  criptografia decifra toda coluna cifrada que a consulta devolve, usada ou não.
+- O 500 não deixa rastro: o `ProblemDetailsFilter` converte a exceção em
+  resposta sem registrá-la em log, então não há id da linha para investigar.
+- O mesmo modo de falha vem de um restore parcial, de uma migração malfeita ou
+  de rotação de chave (a tag do GCM não confere) — o cenário que o requisito de
+  backup da change 02 existe para cobrir.
+
+Tratamento esperado: degradação. O campo volta com marcador de conteúdo
+ilegível, a linha entra no log com modelo, campo e id, e o resto da resposta sai
+normal. Toca o mecanismo de criptografia da 01 (`comum/criptografia`) e a
+auditoria de leitura que depende dele, então vale mais como change própria, ao
+lado da 06, do que como remendo dentro de outra.

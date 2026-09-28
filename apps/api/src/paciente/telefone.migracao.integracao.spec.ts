@@ -7,6 +7,7 @@ import {
   type StartedPostgreSqlContainer,
 } from "@testcontainers/postgresql";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { IMAGEM_POSTGRES } from "../teste/imagem-postgres";
 
 const MIGRATIONS = join(__dirname, "../../prisma/migrations");
 const MIGRATION = readdirSync(MIGRATIONS).find((nome) => nome.endsWith("_telefone_digitos"))!;
@@ -39,7 +40,7 @@ describe("migration telefone_digitos (integração)", () => {
   let saida: string;
 
   beforeAll(async () => {
-    banco = await new PostgreSqlContainer("postgres:16-alpine").start();
+    banco = await new PostgreSqlContainer(IMAGEM_POSTGRES).start();
     execFileSync("npx", ["prisma", "migrate", "deploy"], {
       env: { ...process.env, DATABASE_URL: banco.getConnectionUri() },
       stdio: "ignore",

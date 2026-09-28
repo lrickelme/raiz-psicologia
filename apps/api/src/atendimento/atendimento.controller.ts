@@ -11,11 +11,13 @@ import {
 import {
   atendimentoEntradaSchema,
   consultaAtendimentosSchema,
+  dispensaSchema,
   encerramentoSchema,
   remarcacaoSchema,
   type Atendimento,
   type AtendimentoDados,
   type ConsultaAtendimentos,
+  type Dispensa,
   type Encerramento,
   type Remarcacao,
 } from "@raiz/shared";
@@ -38,6 +40,12 @@ export class AtendimentoController {
     @Query(new ZodValidationPipe(consultaAtendimentosSchema)) consulta: ConsultaAtendimentos,
   ): Promise<Atendimento[]> {
     return this.atendimentos.listar(consulta);
+  }
+
+  /** Um atendimento com os motivos: o detalhe da agenda, que a grade não carrega. */
+  @Get(":id")
+  obter(@Param("id", ParseUUIDPipe) id: string): Promise<Atendimento> {
+    return this.atendimentos.obter(id);
   }
 
   @Post()
@@ -78,5 +86,21 @@ export class AtendimentoController {
     @Body(new ZodValidationPipe(remarcacaoSchema)) dados: Remarcacao,
   ): Promise<Atendimento> {
     return this.atendimentos.remarcar(id, dados);
+  }
+
+  /** Auditado pela classe, como as transições: a trilha explica o total do mês. */
+  @Post(":id/dispensar-cobranca")
+  @HttpCode(200)
+  dispensarCobranca(
+    @Param("id", ParseUUIDPipe) id: string,
+    @Body(new ZodValidationPipe(dispensaSchema)) { motivo }: Dispensa,
+  ): Promise<Atendimento> {
+    return this.atendimentos.dispensarCobranca(id, motivo);
+  }
+
+  @Post(":id/reverter-dispensa")
+  @HttpCode(200)
+  reverterDispensa(@Param("id", ParseUUIDPipe) id: string): Promise<Atendimento> {
+    return this.atendimentos.reverterDispensa(id);
   }
 }

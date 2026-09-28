@@ -26,7 +26,7 @@ export default async function DashboardPage() {
       <CabecalhoPagina
         titulo="Dashboard"
         descricao={`${DIAS_CURTOS[diaDaSemana(hoje)]}, ${formatarDiaLongo(hoje)} · ${ativos.length} ${
-          ativos.length === 1 ? "sessão" : "sessões"
+          ativos.length === 1 ? "atendimento" : "atendimentos"
         } hoje`}
         acoes={
           <Link href="/agenda?novo=1" className={botaoAgendar}>
@@ -76,9 +76,6 @@ export default async function DashboardPage() {
             </div>
           )}
         </Card>
-        <p className="text-raiz-meta text-raiz-texto-terciario">
-          Os indicadores financeiros entram na change 03.
-        </p>
       </AreaConteudo>
     </>
   );

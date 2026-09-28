@@ -66,7 +66,7 @@ export function Agenda({ visaoInicial, encerradosInicial, hojeServidor, abrirNov
     <>
       <CabecalhoPagina
         titulo="Agenda"
-        descricao={`${titulo(visao, referencia)} · ${totalNaVisao} ${totalNaVisao === 1 ? "sessão" : "sessões"}`}
+        descricao={`${titulo(visao, referencia)} · ${totalNaVisao} ${totalNaVisao === 1 ? "atendimento" : "atendimentos"}`}
         acoes={
           <>
             <div role="group" aria-label="Visão" className="flex rounded-full border border-raiz-borda bg-raiz-sand p-[3px]">

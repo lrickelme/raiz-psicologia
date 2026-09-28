@@ -16,7 +16,7 @@ export function ListaPacientes({ pacientes }: { pacientes: Paciente[] }) {
       >
         <span>Paciente</span>
         <span>Telefone</span>
-        <span className="text-right">Valor/sessão</span>
+        <span className="text-right">Valor/atendimento</span>
       </li>
       {pacientes.map((paciente) => (
         <li key={paciente.id} className="border-b border-raiz-borda last:border-b-0">

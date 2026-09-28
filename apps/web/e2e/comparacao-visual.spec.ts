@@ -1,6 +1,7 @@
 import { join } from "node:path";
 import { pathToFileURL } from "node:url";
 import { test } from "@playwright/test";
+import { fimDoMes, hojeLocal, inicioDoMes, instanteLocal, somarDias, somarMeses } from "@raiz/shared";
 import { cadastrarPaciente, entrar } from "./apoio";
 
 /**
@@ -77,4 +78,60 @@ test("prontuário e perfil contra a tela de pacientes do design-ref", async ({ p
   await api(`/pacientes/${paciente.id}/arquivar`, {});
   await page.goto(`/pacientes/${paciente.id}`);
   await page.screenshot({ path: join(SAIDA, "perfil-arquivado.png") });
+});
+
+test("financeiro contra a tela de financeiro do design-ref", async ({ page }) => {
+  await page.goto(`${REFERENCIA}#financeiro`);
+  await page.waitForLoadState("networkidle");
+  await page.screenshot({ path: join(SAIDA, "referencia-financeiro.png"), fullPage: true });
+
+  await entrar(page);
+  const api = (caminho: string, data: object) => page.request.post(`/api/v1${caminho}`, { data });
+  const hoje = hojeLocal();
+  const mes = inicioDoMes(hoje);
+  // Seis pacientes, seis meses de atendimentos realizados, agenda no mês corrente
+  // e um atendimento passado sem encerramento.
+  const nomes = ["Mariana Alves", "Rafael Costa", "Beatriz Lemos", "Carla Nunes", "Otávio Pires", "Diego Matos"];
+  for (const [i, nome] of nomes.entries()) {
+    const paciente = await cadastrarPaciente(page, `${nome} (visual)`);
+    for (let recuo = 0; recuo <= 5; recuo++) {
+      for (let sessao = 0; sessao < 4 - (i % 3); sessao++) {
+        const dia = somarDias(somarMeses(mes, -recuo), sessao * 7);
+        const inicio = instanteLocal(dia, (8 + i) * 60);
+        if (inicio > new Date()) continue;
+        const a = await (
+          await api("/atendimentos", {
+            pacienteId: paciente.id,
+            inicio: inicio.toISOString(),
+            fim: new Date(inicio.getTime() + 50 * 60_000).toISOString(),
+            valor: String(200 + 25 * (i % 3)),
+          })
+        ).json();
+        if (recuo === 0 && sessao === 0 && i === 0) continue; // fica pendente
+        await api(`/atendimentos/${a.id}/${i === 4 && sessao === 1 ? "falta" : "realizar"}`, { motivo: "Não veio." });
+      }
+    }
+    const futuro = instanteLocal(fimDoMes(hoje), (8 + i) * 60);
+    if (futuro > new Date()) {
+      await api("/atendimentos", {
+        pacienteId: paciente.id,
+        inicio: futuro.toISOString(),
+        fim: new Date(futuro.getTime() + 50 * 60_000).toISOString(),
+      });
+    }
+  }
+
+  await page.goto("/financeiro");
+  await page.getByRole("heading", { name: "Últimos 12 meses" }).waitFor();
+  await page.getByText("Carregando…").first().waitFor({ state: "detached" });
+  await page.screenshot({ path: join(SAIDA, "financeiro-mes.png"), fullPage: true });
+
+  await page.getByRole("radio", { name: "Trimestre" }).click();
+  await page.getByRole("button", { name: "Período anterior" }).click();
+  await page.getByText(/não segue o filtro de período/).waitFor();
+  await page.screenshot({ path: join(SAIDA, "financeiro-trimestre-filtrado.png"), fullPage: true });
+
+  await page.goto("/financeiro?periodo=ano&ref=2005-01-01");
+  await page.getByText("Nenhuma receita no período.").waitFor();
+  await page.screenshot({ path: join(SAIDA, "financeiro-vazio.png"), fullPage: true });
 });

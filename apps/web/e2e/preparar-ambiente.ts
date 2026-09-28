@@ -4,6 +4,12 @@ import { PostgreSqlContainer } from "@testcontainers/postgresql";
 import { CREDENCIAL, PORTA_API, PORTA_WEB, URL_API, URL_WEB } from "./ambiente";
 
 const WEB = join(__dirname, "..");
+
+/**
+ * A imagem do `docker-compose.yml`, a de produção — não a alpine, cuja
+ * collation com musl ordena nomes por byte (ver `apps/api/src/teste/imagem-postgres.ts`).
+ */
+const IMAGEM_POSTGRES = "postgres:16";
 const API = join(WEB, "../api");
 
 async function esperar(url: string, processo: ChildProcess, limiteMs = 60_000): Promise<void> {
@@ -43,7 +49,9 @@ function encerrar(processo: ChildProcess) {
  * com `distDir` próprio. Devolve o encerramento, que o Playwright chama ao fim.
  */
 export default async function prepararAmbiente() {
-  const banco = await new PostgreSqlContainer("postgres:16-alpine").start();
+  const banco = await new PostgreSqlContainer(IMAGEM_POSTGRES).start();
+  // Para os testes que precisam de volume (carga do financeiro) semear por SQL.
+  process.env.E2E_DATABASE_URL = banco.getConnectionUri();
   const envApi: NodeJS.ProcessEnv = {
     ...process.env,
     NODE_ENV: "production",
