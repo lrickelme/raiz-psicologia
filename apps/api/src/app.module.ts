@@ -4,6 +4,7 @@ import "./comum/config";
 import { AtendimentoModule } from "./atendimento/atendimento.module";
 import { AuditoriaModule } from "./auditoria/auditoria.module";
 import { AuthModule } from "./auth/auth.module";
+import { EstudosModule } from "./estudos/estudos.module";
 import { FinanceiroModule } from "./financeiro/financeiro.module";
 import { PacienteModule } from "./paciente/paciente.module";
 import { ProntuarioModule } from "./prontuario/prontuario.module";
@@ -19,6 +20,7 @@ import { PrismaModule } from "./prisma/prisma.module";
     AtendimentoModule,
     ProntuarioModule,
     FinanceiroModule,
+    EstudosModule,
   ],
   controllers: [HealthController],
 })

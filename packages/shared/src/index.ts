@@ -5,3 +5,4 @@ export * from "./atendimento";
 export * from "./evolucao";
 export * from "./telefone";
 export * from "./financeiro";
+export * from "./estudos";

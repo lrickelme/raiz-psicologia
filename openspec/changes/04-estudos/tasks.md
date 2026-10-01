@@ -2,40 +2,40 @@
 
 ## 1. Modelo
 
-- [ ] 1.1 Prisma: enums `StatusTopico` e `CorLabel`, modelos `LabelPrioridade` e `TopicoEstudo`, com FK `labelId` `onDelete: Restrict`
-- [ ] 1.2 Migration: `CHECK topico_conclusao_coerente`, índice único `raiz_normalizar(nome)`, índice por status e índice parcial de concluídos por `concluido_em DESC`
-- [ ] 1.3 Na mesma migration, inserir Alta/VINHO/1, Média/AMBAR/2 e Baixa/MUSGO/3
-- [ ] 1.4 `packages/shared/src/estudos.ts`: schemas de tópico (criação, edição sem status, transição só com `status`), label (criação, edição, ordem), respostas do quadro e do histórico; exportar no `index.ts`
-- [ ] 1.5 Teste: `CHECK` recusa `CONCLUIDO` sem `concluido_em` e `A_ESTUDAR` com `concluido_em`
-- [ ] 1.6 Teste: índice único recusa "alta" e "Álta" diante de "Alta"
+- [x] 1.1 Prisma: enums `StatusTopico` e `CorLabel`, modelos `LabelPrioridade` e `TopicoEstudo`, com FK `labelId` `onDelete: Restrict`
+- [x] 1.2 Migration: `CHECK topico_conclusao_coerente`, índice único `raiz_normalizar(nome)`, índice por status e índice parcial de concluídos por `concluido_em DESC`
+- [x] 1.3 Na mesma migration, inserir Alta/VINHO/1, Média/AMBAR/2 e Baixa/MUSGO/3
+- [x] 1.4 `packages/shared/src/estudos.ts`: schemas de tópico (criação, edição sem status, transição só com `status`), label (criação, edição, ordem), respostas do quadro e do histórico; exportar no `index.ts`
+- [x] 1.5 Teste: `CHECK` recusa `CONCLUIDO` sem `concluido_em` e `A_ESTUDAR` com `concluido_em`
+- [x] 1.6 Teste: índice único recusa "alta" e "Álta" diante de "Alta"
 
 ## 2. Labels
 
-- [ ] 2.1 Módulo `estudos` no Nest, com `LabelController`, serviço e repositório, registrado no `AppModule` e sem `@Auditado`
-- [ ] 2.2 `GET /labels` em ordem, com `emUso` por label
-- [ ] 2.3 `POST /labels` com `ordem = max + 1`; nome duplicado vira `409`
-- [ ] 2.4 `PATCH /labels/:id` para nome e cor; nome duplicado vira `409`
-- [ ] 2.5 `PUT /labels/ordem` com a lista completa, reescrita de 1 a n em transação; conjunto diferente do atual vira `409`
-- [ ] 2.6 `DELETE /labels/:id`: `409` com `topicos: n` quando em uso, `P2003` traduzido para o mesmo `409`, renumeração das seguintes em transação
-- [ ] 2.7 Teste: label usada só por tópico concluído também é bloqueada
-- [ ] 2.8 Teste: exclusão com tópico associado entre a contagem e o `DELETE` responde `409` (forçar a corrida no repositório)
-- [ ] 2.9 Teste: cor fora do enum responde `422` em `cor`
-- [ ] 2.10 Teste: ordem sem buracos depois de excluir a label do meio
+- [x] 2.1 Módulo `estudos` no Nest, com `LabelController`, serviço e repositório, registrado no `AppModule` e sem `@Auditado`
+- [x] 2.2 `GET /labels` em ordem, com `emUso` por label
+- [x] 2.3 `POST /labels` com `ordem = max + 1`; nome duplicado vira `409`
+- [x] 2.4 `PATCH /labels/:id` para nome e cor; nome duplicado vira `409`
+- [x] 2.5 `PUT /labels/ordem` com a lista completa, reescrita de 1 a n em transação; conjunto diferente do atual vira `409`
+- [x] 2.6 `DELETE /labels/:id`: `409` com `topicos: n` quando em uso, `P2003` traduzido para o mesmo `409`, renumeração das seguintes em transação
+- [x] 2.7 Teste: label usada só por tópico concluído também é bloqueada
+- [x] 2.8 Teste: exclusão com tópico associado entre a contagem e o `DELETE` responde `409` (forçar a corrida no repositório)
+- [x] 2.9 Teste: cor fora do enum responde `422` em `cor`
+- [x] 2.10 Teste: ordem sem buracos depois de excluir a label do meio
 
 ## 3. Tópicos
 
-- [ ] 3.1 `TopicoController`, serviço e repositório, sem `@Auditado`
-- [ ] 3.2 `POST /topicos` sempre em `A_ESTUDAR`; `labelId` inexistente vira `422` em `labelId`, inclusive via `P2003`
-- [ ] 3.3 `PATCH /topicos/:id` para título, descrição e label (`null` remove); status fora do schema
-- [ ] 3.4 `POST /topicos/:id/mover` com a regra de `concluidoEm` no serviço; mesmo estado não regrava nada
-- [ ] 3.5 `GET /estudos/quadro`: pendentes ordenados no SQL por `ordem NULLS LAST, criado_em`, 5 concluídos mais recentes, total de concluídos, pendentes e concluídos no mês por `inicioDoMes`/`fimDoMes` de `@raiz/shared`
-- [ ] 3.6 `GET /topicos/concluidos` paginado com `TAMANHO_MAXIMO_PAGINA`
-- [ ] 3.7 Teste: concluir, reabrir e concluir de novo grava o instante da segunda conclusão
-- [ ] 3.8 Teste: `concluidoEm` enviado no corpo é ignorado
-- [ ] 3.9 Teste: ordenação com label, sem label e mesma label com datas diferentes; reordenar labels muda a ordem do quadro
-- [ ] 3.10 Teste de fuso: concluído às 22h de 30/09 em São Paulo conta em setembro, com `TZ` do processo diferente de São Paulo
-- [ ] 3.11 Teste: título vazio ou só com espaços responde `422` em `titulo`
-- [ ] 3.12 Teste: não existe rota de exclusão de tópico (`DELETE /topicos/:id` responde `404`)
+- [x] 3.1 `TopicoController`, serviço e repositório, sem `@Auditado`
+- [x] 3.2 `POST /topicos` sempre em `A_ESTUDAR`; `labelId` inexistente vira `422` em `labelId`, inclusive via `P2003`
+- [x] 3.3 `PATCH /topicos/:id` para título, descrição e label (`null` remove); status fora do schema
+- [x] 3.4 `POST /topicos/:id/mover` com a regra de `concluidoEm` no serviço; mesmo estado não regrava nada
+- [x] 3.5 `GET /estudos/quadro`: pendentes ordenados no SQL por `ordem NULLS LAST, criado_em`, 5 concluídos mais recentes, total de concluídos, pendentes e concluídos no mês por `inicioDoMes`/`fimDoMes` de `@raiz/shared`
+- [x] 3.6 `GET /topicos/concluidos` paginado com `TAMANHO_MAXIMO_PAGINA`
+- [x] 3.7 Teste: concluir, reabrir e concluir de novo grava o instante da segunda conclusão
+- [x] 3.8 Teste: `concluidoEm` enviado no corpo é ignorado
+- [x] 3.9 Teste: ordenação com label, sem label e mesma label com datas diferentes; reordenar labels muda a ordem do quadro
+- [x] 3.10 Teste de fuso: concluído às 22h de 30/09 em São Paulo conta em setembro, com `TZ` do processo diferente de São Paulo
+- [x] 3.11 Teste: título vazio ou só com espaços responde `422` em `titulo`
+- [x] 3.12 Teste: não existe rota de exclusão de tópico (`DELETE /topicos/:id` responde `404`)
 
 ## 4. Interface
 

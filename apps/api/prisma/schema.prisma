@@ -171,3 +171,55 @@ model RascunhoEvolucao {
   @@unique([pacienteId, atendimentoId])
   @@map("rascunho_evolucao")
 }
+
+enum StatusTopico {
+  A_ESTUDAR
+  EM_ESTUDO
+  CONCLUIDO
+}
+
+/// Papel de cor do Raíz, nunca hex: o par fundo/texto vive no front (spec
+/// estudos, "Paleta fechada de cores").
+enum CorLabel {
+  VINHO
+  AMBAR
+  MUSGO
+  MUSGO_SUAVE
+  MARROM
+  BEGE
+}
+
+/// Prioridade de tópico de estudo. A `ordem` (1..n, sem buracos) é que define a
+/// prioridade, não o nome. Sem `UNIQUE` na ordem: a reordenação sempre reescreve
+/// a lista inteira numa transação (design.md da 04). O nome é único por
+/// `raiz_normalizar`, índice de expressão criado na migration `estudos`.
+model LabelPrioridade {
+  id           String         @id @default(uuid(7)) @db.Uuid
+  nome         String
+  cor          CorLabel
+  ordem        Int
+  topicos      TopicoEstudo[]
+  criadoEm     DateTime       @default(now()) @map("criado_em") @db.Timestamptz
+  atualizadoEm DateTime       @updatedAt @map("atualizado_em") @db.Timestamptz
+
+  @@map("label_prioridade")
+}
+
+/// Tópico de estudo. Não é dado de paciente: sem cifra e sem auditoria. Nunca
+/// excluído; a conclusão encerra o ciclo. O `CHECK topico_conclusao_coerente` da
+/// migration garante `concluidoEm` se, e somente se, `CONCLUIDO`.
+model TopicoEstudo {
+  id           String           @id @default(uuid(7)) @db.Uuid
+  titulo       String
+  descricao    String?
+  labelId      String?          @map("label_id") @db.Uuid
+  label        LabelPrioridade? @relation(fields: [labelId], references: [id], onDelete: Restrict)
+  status       StatusTopico     @default(A_ESTUDAR)
+  /// Hora do servidor na conclusão; nenhum DTO aceita este campo.
+  concluidoEm  DateTime?        @map("concluido_em") @db.Timestamptz
+  criadoEm     DateTime         @default(now()) @map("criado_em") @db.Timestamptz
+  atualizadoEm DateTime         @updatedAt @map("atualizado_em") @db.Timestamptz
+
+  @@index([status])
+  @@map("topico_estudo")
+}
