@@ -23,6 +23,11 @@ export function formatarData(iso: string): string {
   return `${Number(dia)} ${MESES[Number(mes) - 1]} ${ano}`;
 }
 
+/** Instante ISO → "28 jun", no dia de São Paulo. Para listas do ano corrente. */
+export function formatarDiaMes(iso: string): string {
+  return formatarData(iso).split(" ").slice(0, 2).join(" ");
+}
+
 /** Idade completa em anos, contando a partir de uma data AAAA-MM-DD. */
 export function idade(nascimento: string, hoje = new Date()): number {
   const [ano, mes, dia] = nascimento.split("-").map(Number);

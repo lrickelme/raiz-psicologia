@@ -135,3 +135,50 @@ test("financeiro contra a tela de financeiro do design-ref", async ({ page }) =>
   await page.getByText("Nenhuma receita no período.").waitFor();
   await page.screenshot({ path: join(SAIDA, "financeiro-vazio.png"), fullPage: true });
 });
+
+test("estudos contra a tela de estudos do design-ref", async ({ page }) => {
+  await page.goto(`${REFERENCIA}#estudos`);
+  await page.waitForLoadState("networkidle");
+  await page.screenshot({ path: join(SAIDA, "referencia-estudos.png"), fullPage: true });
+
+  await entrar(page);
+  const api = async (caminho: string, data: object) => (await page.request.post(`/api/v1${caminho}`, { data })).json();
+  const labels: { id: string; nome: string }[] = await (await page.request.get("/api/v1/labels")).json();
+  const label = (nome: string) => labels.find((l) => l.nome === nome)?.id;
+
+  // Os mesmos tópicos da referência, sem o nome de paciente que ela traz.
+  const pendentes = [
+    ["Revisar técnicas de regulação emocional", "Foco em DBT e mindfulness para o grupo de ansiedade.", "Alta", "A_ESTUDAR"],
+    ["Artigo: vínculo terapêutico em adolescentes", "Ler e fichar — Revista Brasileira de Psicoterapia.", "Média", "A_ESTUDAR"],
+    ["Atualizar protocolo de anamnese", "Incluir campos de histórico familiar.", "Baixa", "A_ESTUDAR"],
+    ["Curso de Terapia do Esquema", "Módulo 3 de 8 · entregar exercício até sexta.", "Alta", "EM_ESTUDO"],
+    ["Supervisão clínica", "Preparar material para apresentação.", "Média", "EM_ESTUDO"],
+  ];
+  for (const [titulo, descricao, nome, status] of pendentes) {
+    const topico = await api("/topicos", { titulo, descricao, labelId: label(nome) });
+    if (status !== "A_ESTUDAR") await api(`/topicos/${topico.id}/mover`, { status });
+  }
+  const concluidos = ["Atualização CRP — ética", "Leitura: Gestalt-terapia (Perls)", "Webinar: Luto e perdas"];
+  for (const titulo of [...Array.from({ length: 9 }, (_, i) => `Leitura antiga ${i + 1}`), ...concluidos]) {
+    const topico = await api("/topicos", { titulo });
+    await api(`/topicos/${topico.id}/mover`, { status: "CONCLUIDO" });
+  }
+
+  await page.goto("/estudos");
+  await page.getByText(/no histórico/).waitFor();
+  await page.screenshot({ path: join(SAIDA, "estudos-quadro.png"), fullPage: true });
+
+  await page.getByRole("button", { name: "+ Novo tópico" }).click();
+  await page.getByLabel("Título").waitFor();
+  await page.screenshot({ path: join(SAIDA, "estudos-novo-topico.png") });
+  await page.keyboard.press("Escape");
+
+  await page.getByRole("button", { name: "Gerenciar labels" }).click();
+  await page.getByRole("button", { name: "Excluir Média" }).click();
+  await page.screenshot({ path: join(SAIDA, "estudos-labels.png") });
+  await page.keyboard.press("Escape");
+
+  await page.goto("/estudos/historico");
+  await page.getByRole("heading", { name: "Histórico de estudos" }).waitFor();
+  await page.screenshot({ path: join(SAIDA, "estudos-historico.png"), fullPage: true });
+});

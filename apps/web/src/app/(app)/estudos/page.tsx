@@ -1,18 +1,8 @@
-import { AreaConteudo } from "@/components/shell/area-conteudo";
-import { CabecalhoPagina } from "@/components/shell/cabecalho-pagina";
-import { Card } from "@/components/ui/card";
+import type { Metadata } from "next";
+import { Quadro } from "@/features/estudos/quadro";
+
+export const metadata: Metadata = { title: "Estudos · Raíz" };
 
 export default function EstudosPage() {
-  return (
-    <>
-      <CabecalhoPagina titulo="Estudos" descricao="Tópicos e labels de prioridade" />
-      <AreaConteudo>
-        <Card>
-          <p className="text-raiz-corpo text-raiz-texto-terciario">
-            Este módulo é construído na change 04 (estudos).
-          </p>
-        </Card>
-      </AreaConteudo>
-    </>
-  );
+  return <Quadro />;
 }

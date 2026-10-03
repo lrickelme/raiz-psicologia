@@ -39,20 +39,20 @@
 
 ## 4. Interface
 
-- [ ] 4.1 `cores-label.ts`: mapa `CorLabel → { fundo, texto }` em classes do `@theme`; adicionar token para o branco do pill se não existir; zero hex no JSX
-- [ ] 4.2 Teste unitário de contraste lendo `globals.css`: todo par ≥ 4,5:1
-- [ ] 4.3 `pill-label.tsx` sempre com o nome escrito
-- [ ] 4.4 Quadro em `(app)/estudos` substituindo o placeholder: três colunas de um componente só, contadores e cabeçalho "N pendentes · M concluídos este mês", conforme o `design-ref`
-- [ ] 4.5 Cartão com caixa de conclusão e menu "Mover para…"/"Editar", operável por teclado e sem ação só em `hover`
-- [ ] 4.6 Movimento otimista no TanStack Query, com rollback e mensagem em caso de erro
-- [ ] 4.7 Coluna "Concluídos": cartões riscados com data em mono, "+ N no histórico" quando houver mais de 5
-- [ ] 4.8 Estado vazio por coluna, com "+ Novo tópico" sempre disponível
-- [ ] 4.9 Modal de tópico (criar e editar): título, descrição, seletor de label com opção "Sem prioridade", aviso fixo de que estudos não é prontuário, erros `422` por campo sem limpar o formulário
-- [ ] 4.10 Histórico de concluídos paginado, reaproveitando `paginacao.tsx`, com ação de reabrir
-- [ ] 4.11 Gestão de labels em modal pelo "Gerenciar labels": criar, renomear, trocar cor em seletor de amostras nomeadas, subir/descer, excluir com aviso por `emUso` e tratamento do `409`
-- [ ] 4.12 E2E: criar tópico, mover, concluir, reabrir pelo histórico
-- [ ] 4.13 E2E: excluir label em uso mostra a quantidade e não exclui; trocar a label dos tópicos e excluir com sucesso
-- [ ] 4.14 Captura de estudos no `comparacao-visual.spec.ts` contra `#estudos` do `design-ref`
+- [x] 4.1 `cores-label.ts`: mapa `CorLabel → { fundo, texto }` em classes do `@theme`; adicionar token para o branco do pill se não existir; zero hex no JSX
+- [x] 4.2 Teste unitário de contraste lendo `globals.css`: todo par ≥ 4,5:1
+- [x] 4.3 `pill-label.tsx` sempre com o nome escrito
+- [x] 4.4 Quadro em `(app)/estudos` substituindo o placeholder: três colunas de um componente só, contadores e cabeçalho "N pendentes · M concluídos este mês", conforme o `design-ref`
+- [x] 4.5 Cartão com caixa de conclusão e menu "Mover para…"/"Editar", operável por teclado e sem ação só em `hover`
+- [x] 4.6 Movimento otimista no TanStack Query, com rollback e mensagem em caso de erro
+- [x] 4.7 Coluna "Concluídos": cartões riscados com data em mono, "+ N no histórico" quando houver mais de 5
+- [x] 4.8 Estado vazio por coluna, com "+ Novo tópico" sempre disponível
+- [x] 4.9 Modal de tópico (criar e editar): título, descrição, seletor de label com opção "Sem prioridade", aviso fixo de que estudos não é prontuário, erros `422` por campo sem limpar o formulário
+- [x] 4.10 Histórico de concluídos paginado, reaproveitando `paginacao.tsx`, com ação de reabrir
+- [x] 4.11 Gestão de labels em modal pelo "Gerenciar labels": criar, renomear, trocar cor em seletor de amostras nomeadas, subir/descer, excluir com aviso por `emUso` e tratamento do `409`
+- [x] 4.12 E2E: criar tópico, mover, concluir, reabrir pelo histórico
+- [x] 4.13 E2E: excluir label em uso mostra a quantidade e não exclui; trocar a label dos tópicos e excluir com sucesso
+- [x] 4.14 Captura de estudos no `comparacao-visual.spec.ts` contra `#estudos` do `design-ref`
 
 ## 5. Fechamento
 

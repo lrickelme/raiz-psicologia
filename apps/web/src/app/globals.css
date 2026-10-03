@@ -34,6 +34,7 @@
   --color-raiz-vinho-suave: #f1dedc; /* fundo do pill "Cancelada" */
   --color-raiz-musgo-escuro: #3f4a33; /* texto do bloco "Realizada" na agenda */
   --color-raiz-ambar-escuro: #6b4f1e; /* texto do bloco "Agendada" na agenda */
+  --color-raiz-sobre-pill: #ffffff; /* #fff: texto dos pills de label sobre cor sólida */
 
   /* --- Tipografia --- */
   --font-raiz-display: var(--font-bricolage), sans-serif;
