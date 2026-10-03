@@ -172,9 +172,23 @@ mesma forma, para cobrir corrida com exclusão.
   `modal-topico.tsx`, `historico-concluidos.tsx`, `gestao-labels.tsx`,
   `pill-label.tsx`, `cores-label.ts` e `consultas.ts`.
 - O cartão tem a caixa de conclusão, como no design, e um botão de ações
-  ("Mover para…", "Editar"). Não há ação só em `hover` nem arrasto. As colunas
-  são uma lista de cartões gerada por um componente só: na change 06 viram abas
-  ou pilha sem reescrever o cartão.
+  ("Mover para…", "Editar"). Não há ação só em `hover`. As colunas são uma lista
+  de cartões gerada por um componente só: na change 06 viram abas ou pilha sem
+  reescrever o cartão.
+- Arrastar entre colunas usa o drag and drop nativo do HTML, sem biblioteca. O
+  cartão é `draggable`, e cada coluna é um alvo que aceita só o tipo de dado do
+  tópico. Soltar chama a mesma mutação do menu, então as regras de status, a
+  atualização otimista e o rollback são os mesmos. Soltar na própria coluna ou
+  fora de uma coluna não faz requisição. O drag and drop nativo não funciona por
+  toque, e é por isso que o menu continua obrigatório: é o caminho da change 06.
+- Mudar de coluna desmonta o cartão e monta outro na coluna nova, e o foco do
+  teclado iria para o `body`. Antes de mover pelo cartão, o quadro guarda a
+  coluna de origem, a posição e o controle usado (caixa ou menu). Depois da
+  renderização, foca o mesmo controle do cartão que ficou naquela posição (ou no
+  último da coluna). Se a coluna esvaziou, foca a própria coluna, que tem
+  `tabIndex=-1`. O foco fica na coluna de origem, e não segue o cartão, porque o
+  uso típico é concluir vários itens da mesma coluna em sequência. Uma região
+  `aria-live` anuncia para onde o cartão foi.
 - Mudar estado é otimista no cache do TanStack Query, com rollback em erro. É o
   gesto mais frequente da tela e não pode esperar a ida e volta.
 - O histórico reaproveita `features/pacientes/paginacao.tsx`.

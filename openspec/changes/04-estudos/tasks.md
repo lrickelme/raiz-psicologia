@@ -53,10 +53,15 @@
 - [x] 4.12 E2E: criar tópico, mover, concluir, reabrir pelo histórico
 - [x] 4.13 E2E: excluir label em uso mostra a quantidade e não exclui; trocar a label dos tópicos e excluir com sucesso
 - [x] 4.14 Captura de estudos no `comparacao-visual.spec.ts` contra `#estudos` do `design-ref`
+- [x] 4.15 `vitest.config.mts` do web com alias de `@raiz/shared` para `packages/shared/src`, e a suíte passa sem `dist/`
+- [x] 4.16 Foco depois de mover pelo cartão: mesmo controle do cartão que ocupou a posição na coluna de origem, ou a coluna se ela esvaziou; anúncio em `aria-live`
+- [x] 4.17 Arrastar entre colunas com drag and drop nativo, pela mesma mutação do menu; soltar na própria coluna ou fora não faz requisição
+- [x] 4.18 E2E: foco ao concluir pelo teclado em sequência e ao esvaziar a coluna
+- [x] 4.19 E2E: arrastar para Em estudo e para Concluídos e de volta, com recarga; soltar fora não faz requisição
 
 ## 5. Fechamento
 
-- [ ] 5.1 Conferir cada cenário da delta spec contra o comportamento real, como caixa-preta, com relatório em `verificacao.md`
-- [ ] 5.2 Confirmar com a profissional ou no SDD que o escopo cobre os RF07 a RF10 por inteiro (ver risco no proposal)
-- [ ] 5.3 `pnpm -r test` e `pnpm -r build`
-- [ ] 5.4 `openspec validate 04-estudos`
+- [x] 5.1 Conferir cada cenário da delta spec contra o comportamento real, como caixa-preta, com relatório em `verificacao.md`
+- [x] 5.2 Confirmar com a profissional ou no SDD que o escopo cobre os RF07 a RF10 por inteiro (ver risco no proposal)
+- [x] 5.3 `pnpm -r test` e `pnpm -r build`
+- [x] 5.4 `openspec validate 04-estudos`

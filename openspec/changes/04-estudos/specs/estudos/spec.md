@@ -58,8 +58,11 @@ Concluir MUST gravar o instante da conclusão, definido pelo servidor. Sair de
 `CONCLUIDO` MUST limpar esse instante. Um tópico MUST ter instante de conclusão
 se, e somente se, estiver `CONCLUIDO`, e o banco MUST garantir isso.
 
-A mudança de estado MUST ser feita por uma ação explícita no cartão, sem
-depender de arrastar nem de `hover`.
+Cada cartão MUST oferecer a mudança de estado por uma ação explícita (a caixa de
+conclusão e o menu), operável por teclado e sem depender de arrastar nem de
+`hover`. Depois de uma mudança de estado feita no cartão, o foco do teclado MUST
+ficar na coluna de onde o cartão saiu, no mesmo controle do cartão que ocupou o
+lugar dele, e nunca voltar ao início da página.
 
 #### Scenario: Começar a estudar
 
@@ -94,12 +97,65 @@ depender de arrastar nem de `hover`.
 - WHEN o servidor a processa
 - THEN o instante do corpo é ignorado e o gravado é o do servidor
 
+#### Scenario: Foco depois de concluir pelo teclado
+
+- GIVEN três tópicos em "A estudar" e o foco na caixa de conclusão do primeiro
+- WHEN a profissional a marca com Espaço
+- THEN o tópico vai para "Concluídos"
+- AND o foco fica na caixa de conclusão do tópico que passou a ser o primeiro da
+  coluna, e um novo Espaço o conclui também
+
+#### Scenario: Foco quando a coluna esvazia
+
+- GIVEN um único tópico em "Em estudo"
+- WHEN a profissional o move para "Concluídos" pelo menu, usando o teclado
+- THEN o foco vai para a coluna "Em estudo", agora vazia, e não para o início da
+  página
+
 #### Scenario: Movimento para o mesmo estado
 
 - GIVEN um tópico em "Em estudo"
 - WHEN chega uma requisição para movê-lo para "Em estudo"
 - THEN a resposta é de sucesso, sem mudança
 - AND o instante de conclusão de um tópico já concluído não é regravado
+
+### Requirement: Arrastar entre colunas
+
+A profissional SHALL poder mudar o status de um tópico arrastando o cartão de uma
+coluna do quadro para outra, e a mudança MUST ser persistida no ato, com as
+mesmas regras da mudança pelo cartão. Arrastar MUST NOT ser o único caminho: o
+menu e a caixa de conclusão do cartão continuam disponíveis.
+
+#### Scenario: Arrastar para "Em estudo"
+
+- GIVEN um tópico em "A estudar"
+- WHEN a profissional o arrasta e solta na coluna "Em estudo"
+- THEN ele aparece em "Em estudo"
+- AND, depois de recarregar a página, continua lá
+
+#### Scenario: Arrastar para "Concluídos"
+
+- GIVEN um tópico em "Em estudo"
+- WHEN a profissional o solta em "Concluídos"
+- THEN ele fica concluído, com o instante de conclusão definido pelo servidor
+
+#### Scenario: Arrastar de volta de "Concluídos"
+
+- GIVEN um tópico concluído
+- WHEN a profissional o solta em "A estudar"
+- THEN ele volta a "A estudar", sem instante de conclusão
+
+#### Scenario: Menu e arrastar são equivalentes
+
+- GIVEN dois tópicos iguais em "A estudar"
+- WHEN um é movido para "Em estudo" pelo menu e o outro arrastando
+- THEN os dois ficam no mesmo estado, pela mesma requisição
+
+#### Scenario: Soltar fora de uma coluna
+
+- GIVEN um tópico em "A estudar"
+- WHEN a profissional o arrasta e o solta fora das colunas, ou na própria coluna
+- THEN nada muda e nenhuma requisição de mudança de estado é feita
 
 ### Requirement: Quadro de estudos
 

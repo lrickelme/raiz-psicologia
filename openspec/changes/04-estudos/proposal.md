@@ -26,8 +26,9 @@ Incluído:
   nome do papel de cor, nunca um hex.
 - Exclusão de label em uso é bloqueada. A profissional troca a prioridade dos
   tópicos antes de excluir.
-- Quadro em três colunas, conforme o `design-ref`, com as ações sem depender de
-  arrastar nem de `hover`.
+- Quadro em três colunas, conforme o `design-ref`. O status muda arrastando o
+  cartão entre colunas ou pelo menu do cartão, que não depende de mouse nem de
+  `hover` e é o caminho por toque na change 06.
 
 Excluído:
 
@@ -36,8 +37,6 @@ Excluído:
   depois sem mexer no modelo.
 - Várias labels por tópico. A label representa prioridade e não é uma etiqueta
   livre.
-- Arrastar entre colunas. A mudança de estado é feita por ação explícita, que
-  também funciona por toque na change 06. Arrastar pode vir como atalho depois.
 - Prazo, lembrete ou recorrência em tópico de estudo. Lembrete é a change 05.
 - Anexos e links estruturados.
 - Adaptação para celular, que fica para a change 06.

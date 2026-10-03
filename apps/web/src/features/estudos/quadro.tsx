@@ -7,7 +7,7 @@ import { AreaConteudo } from "@/components/shell/area-conteudo";
 import { CabecalhoPagina } from "@/components/shell/cabecalho-pagina";
 import { Botao } from "@/components/ui/botao";
 import { Carregando, Falha } from "@/features/financeiro/painel";
-import { CartaoTopico, NOME_COLUNA } from "./cartao-topico";
+import { CartaoTopico, NOME_COLUNA, SELETOR_CONTROLE, type ControleCartao } from "./cartao-topico";
 import { Coluna } from "./coluna";
 import { useMover, useQuadro } from "./consultas";
 import { GestaoLabels } from "./gestao-labels";
@@ -15,25 +15,69 @@ import { ModalTopico } from "./modal-topico";
 
 const plural = (n: number, um: string, varios: string) => `${n} ${n === 1 ? um : varios}`;
 
+/** De onde saiu o cartão movido pelo teclado ou clique, para o foco ficar ali. */
+type OrigemFoco = { origem: StatusTopico; indice: number; controle: ControleCartao };
+
+/**
+ * O cartão movido é desmontado e o foco cairia no `body`. Assim que ele sai da
+ * coluna de origem, o foco vai para o mesmo controle do cartão que ocupou o
+ * lugar dele, ou para a coluna, se ela esvaziou (design.md, "Frontend").
+ */
+function manterFocoNaOrigem(id: string, { origem, indice, controle }: OrigemFoco) {
+  const coluna = document.querySelector<HTMLElement>(`[data-status="${origem}"]`);
+  if (!coluna) return;
+  const limite = performance.now() + 2000;
+  const tentar = () => {
+    if (coluna.querySelector(`[data-topico="${id}"]`)) {
+      if (performance.now() < limite) requestAnimationFrame(tentar);
+      return;
+    }
+    // Se ela já focou outra coisa nesse meio-tempo, não tira o foco de lá.
+    if (document.activeElement && document.activeElement !== document.body) return;
+    const cartoes = coluna.querySelectorAll("article");
+    const vizinho = cartoes[Math.min(indice, cartoes.length - 1)];
+    (vizinho?.querySelector<HTMLElement>(SELETOR_CONTROLE[controle]) ?? coluna).focus();
+  };
+  requestAnimationFrame(tentar);
+}
+
 export function Quadro() {
   const quadro = useQuadro();
   const mover = useMover();
   // `null` fechado; sem tópico, criação.
   const [edicao, setEdicao] = useState<{ topico?: Topico } | null>(null);
   const [gestaoAberta, setGestaoAberta] = useState(false);
+  const [anuncio, setAnuncio] = useState("");
 
   const dados = quadro.data;
+  const listas = dados && {
+    A_ESTUDAR: dados.aEstudar,
+    EM_ESTUDO: dados.emEstudo,
+    CONCLUIDO: dados.concluidos,
+  };
+
+  function moverTopico(topico: Topico, status: StatusTopico, foco?: OrigemFoco) {
+    if (topico.status === status) return;
+    if (foco) manterFocoNaOrigem(topico.id, foco);
+    setAnuncio(`“${topico.titulo}” movido para ${NOME_COLUNA[status]}.`);
+    mover.mutate({ topico, status });
+  }
+
   const cartoes = (topicos: Topico[]) =>
-    topicos.map((topico) => ({
+    topicos.map((topico, indice) => ({
       id: topico.id,
       no: (
         <CartaoTopico
           topico={topico}
-          onMover={(status: StatusTopico) => mover.mutate({ topico, status })}
+          onMover={(status, controle) => moverTopico(topico, status, { origem: topico.status, indice, controle })}
           onEditar={() => setEdicao({ topico })}
         />
       ),
     }));
+  const soltarEm = (status: StatusTopico) => (id: string) => {
+    const topico = listas && Object.values(listas).flat().find((t) => t.id === id);
+    if (topico) moverTopico(topico, status);
+  };
   const noHistorico = dados ? dados.totalConcluidos - dados.concluidos.length : 0;
 
   return (
@@ -66,6 +110,9 @@ export function Quadro() {
         }
       />
       <AreaConteudo>
+        <p aria-live="polite" className="sr-only">
+          {anuncio}
+        </p>
         {mover.error && (
           <p
             role="alert"
@@ -82,25 +129,31 @@ export function Quadro() {
         ) : (
           <div className="flex items-start gap-5 pt-0.5">
             <Coluna
+              status="A_ESTUDAR"
               titulo={NOME_COLUNA.A_ESTUDAR}
               marcador="bg-raiz-ambar"
               contador={dados.aEstudar.length}
               vazio="Nenhum tópico a estudar. Use “+ Novo tópico” para começar."
               cartoes={cartoes(dados.aEstudar)}
+              onSoltar={soltarEm("A_ESTUDAR")}
             />
             <Coluna
+              status="EM_ESTUDO"
               titulo={NOME_COLUNA.EM_ESTUDO}
               marcador="bg-raiz-vinho"
               contador={dados.emEstudo.length}
               vazio="Nada em estudo agora."
               cartoes={cartoes(dados.emEstudo)}
+              onSoltar={soltarEm("EM_ESTUDO")}
             />
             <Coluna
+              status="CONCLUIDO"
               titulo={NOME_COLUNA.CONCLUIDO}
               marcador="bg-raiz-musgo"
               contador={dados.totalConcluidos}
               vazio="Nenhum tópico concluído ainda."
               cartoes={cartoes(dados.concluidos)}
+              onSoltar={soltarEm("CONCLUIDO")}
               rodape={
                 dados.totalConcluidos > 0 && (
                   <Link

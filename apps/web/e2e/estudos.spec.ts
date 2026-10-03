@@ -61,7 +61,9 @@ test.describe("estudos", () => {
     await expect(coluna(page, "Em estudo").getByRole("article", { name: titulo })).toBeVisible();
     await expect(coluna(page, "A estudar").getByRole("article", { name: titulo })).toHaveCount(0);
 
-    await page.getByRole("checkbox", { name: `Concluído: ${titulo}` }).check();
+    // `click`, não `check`: o cartão muda de coluna e a caixa clicada sai do DOM; a
+    // asserção abaixo confere a caixa do cartão novo.
+    await page.getByRole("checkbox", { name: `Concluído: ${titulo}` }).click();
     const concluido = coluna(page, "Concluídos").getByRole("article", { name: titulo });
     await expect(concluido).toContainText("concluído");
     await expect(page.getByRole("checkbox", { name: `Concluído: ${titulo}` })).toBeChecked();
@@ -133,5 +135,76 @@ test.describe("estudos", () => {
     await expect(
       page.getByRole("dialog", { name: "Novo tópico" }).getByRole("option", { name: label.nome }),
     ).toHaveCount(0);
+  });
+
+  test("o foco fica na coluna de origem ao concluir e mover pelo teclado", async ({ page }) => {
+    const marca = sufixo();
+    // Sem label, ficam por último e em ordem de criação, depois de qualquer outro tópico.
+    const [t1, t2, t3] = [`Foco 1 ${marca}`, `Foco 2 ${marca}`, `Foco 3 ${marca}`];
+    await criarTopico(page, t1);
+    await criarTopico(page, t2);
+    const terceiro = await criarTopico(page, t3);
+    const quadro = await (await page.request.get("/api/v1/estudos/quadro")).json();
+    for (const t of quadro.emEstudo as Topico[]) {
+      await page.request.post(`/api/v1/topicos/${t.id}/mover`, { data: { status: "A_ESTUDAR" } });
+    }
+
+    await page.goto("/estudos");
+    await page.getByRole("checkbox", { name: `Concluído: ${t1}` }).focus();
+    await page.keyboard.press("Space");
+    await expect(coluna(page, "Concluídos").getByRole("article", { name: t1 })).toBeVisible();
+    await expect(page.getByRole("checkbox", { name: `Concluído: ${t2}` })).toBeFocused();
+    // Concluir em sequência, sem voltar ao início da página.
+    await page.keyboard.press("Space");
+    await expect(coluna(page, "Concluídos").getByRole("article", { name: t2 })).toBeVisible();
+    await expect(page.getByRole("checkbox", { name: `Concluído: ${t3}` })).toBeFocused();
+
+    // Pelo menu: o único cartão de "Em estudo" sai, e o foco vai para a coluna vazia.
+    await page.request.post(`/api/v1/topicos/${terceiro.id}/mover`, { data: { status: "EM_ESTUDO" } });
+    await page.reload();
+    await page.getByRole("button", { name: `Ações de “${t3}”` }).focus();
+    await page.keyboard.press("ArrowDown");
+    await page.getByRole("menuitem", { name: "Mover para Concluídos" }).press("Enter");
+    await expect(coluna(page, "Concluídos").getByRole("article", { name: t3 })).toBeVisible();
+    await expect(coluna(page, "Em estudo")).toBeFocused();
+  });
+
+  test("arrastar entre colunas persiste o status; soltar fora não faz nada", async ({ page }) => {
+    const titulo = `Arrastar ${sufixo()}`;
+    const topico = await criarTopico(page, titulo);
+    const cartao = (nome: "A estudar" | "Em estudo" | "Concluídos") =>
+      coluna(page, nome).getByRole("article", { name: titulo });
+    const estado = async () =>
+      (await (await page.request.get("/api/v1/topicos/concluidos?pagina=1")).json()).itens.find(
+        (t: Topico) => t.id === topico.id,
+      ) ?? null;
+    const movimentos: string[] = [];
+    page.on("request", (r) => {
+      if (r.url().includes("/mover")) movimentos.push(r.postData() ?? "");
+    });
+
+    await page.goto("/estudos");
+    await cartao("A estudar").dragTo(coluna(page, "Em estudo"));
+    await expect(cartao("Em estudo")).toBeVisible();
+    await page.reload();
+    await expect(cartao("Em estudo")).toBeVisible();
+
+    await cartao("Em estudo").dragTo(coluna(page, "Concluídos"));
+    await expect(cartao("Concluídos")).toBeVisible();
+    await expect.poll(estado).toMatchObject({ status: "CONCLUIDO", concluidoEm: expect.any(String) });
+
+    await cartao("Concluídos").dragTo(coluna(page, "A estudar"));
+    await expect(cartao("A estudar")).toBeVisible();
+    await page.reload();
+    await expect(cartao("A estudar")).toBeVisible();
+    expect(await estado()).toBeNull();
+    expect(movimentos.map((m) => JSON.parse(m).status)).toEqual(["EM_ESTUDO", "CONCLUIDO", "A_ESTUDAR"]);
+
+    // Na própria coluna ou fora das colunas: nenhuma requisição.
+    await cartao("A estudar").dragTo(coluna(page, "A estudar"));
+    await cartao("A estudar").dragTo(page.getByRole("heading", { name: "Conteúdos a estudar" }));
+    await page.waitForTimeout(500);
+    expect(movimentos).toHaveLength(3);
+    await expect(cartao("A estudar")).toBeVisible();
   });
 });
